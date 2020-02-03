@@ -162,3 +162,119 @@ vector<pii> match(int nl, int nr, const vector<pii>& es) {
 
 共进行$V$轮时间复杂度为$O(E)$的DFS寻找增广路，因此时间复杂度为$O(VE)$。
 
+### Hopcroft-Karp
+
+原理：每次在分层图上寻找多条增广路。
+
+## 二分图最大权匹配（施工中）
+
+### 匈牙利算法（最大权完美匹配）
+
+注：也叫Kuhn-Munkres算法（这两个人是匈牙利人）
+
+原理：相等子图中的完美匹配是原图中的最大权完美匹配
+
+KM为每个顶点定义了一个被称为顶标的值，在算法运行的每个阶段保持对于任意一条边$(u,v)$有$A(u)+B(v)\geq w(u,v)$。同时称由满足$A(u)+B(v)=w(u,v)$的所有边组成的子图为相等子图。
+
+注2：如非特别注明，本段中$u \in X, v \in Y, w(u,v)$为边$(u,v)$的权，$X$中点$u$的顶标被记为$A(u)$，$Y$中点$v$的顶标被记为$B(v)$。
+
+原理证明：
+
+若相等子图中存在完美匹配$M$，显然$w(M)=\sum_{u \in X}A(u)+\sum_{v \in Y}B(v)$。注意到对于图中的任意一个完美匹配$M'$有$w(M')=\sum_{(u,v)\in M'}w(u,v)\leq\sum_{(u,v)\in M'}A(u)+B(v)=w(M)$，所以$M$是最大权完美匹配。
+
+过程：
+
+与寻找二分图最大匹配的过程类似，依次从每个点出发**在相等子图中**寻找增广路。若无法找到则通过调整顶标使相等子图扩大。
+
+在无法找到增广路的情况下，从每个点出发的交错路形成了一棵交错树，其所有叶子都是X顶点。不妨设交错树中的X顶点集合为$S$，而Y顶点集合为$T$。考虑如何调整顶标才能在满足约束$\forall(u,v) \in E,A(u)+B(v) \geq w(u,v)$的情况下使得：
+
+1. 原来在交错树中的边之后依然在交错树中。
+2. 原来X顶点在交错树，而Y顶点不在交错树中的边被加入相等子图。
+
+由约束1，对于交错树中的每条边，其X顶点的顶标的调整值与Y顶点的顶标的调整值必须互为相反数。即对于交错树中的所有X顶点，其顶标必须被加上一个数，而Y顶点的顶标需要被减去一个数，不妨设其为$d$。
+
+考虑到这样的调整对原来X顶点在交错树中而Y顶点不在交错树中的边的影响，为满足这些边对顶标带来的约束，必有
+
+$$d = \min_{u \in S, v \notin T}A(u)+B(v)-w(u,v)$$
+
+考虑这种调整对图中所有边造成的影响：
+
+1. $u \in S, v \in T$，$A(u)-d+B(v)+d=A(u)+B(v)\geq w(u,v)$，没有影响。
+2. $u \notin S, v \notin T$，没有影响。
+3. $u \in S, v \notin T$，$A(u)-d+B(v)\geq w(u,v)$，一些这类边被加入了相等子图中
+4. $u \notin S, v \in T$，$A(u)+B(v)+d > w(u,v)$，没有影响。
+
+由二分图最大匹配的经验我们很容易写出暴力寻找调整值$d$的算法。其复杂度如下：
+
+1. 从每个顶点出发尝试寻找增广路，至多寻找$O(n)$次。
+2. 每次寻找增广路，至多遍历$O(n^2)$条边。
+3. 寻找失败则调整顶标，每次调整会使得至少一个Y顶点被加入交错树，所以至多调整$O(n)$次。
+4. 通过遍历边集来计算调整值，至多遍历$O(n^2)$条边。
+
+因此这种暴力的时间复杂度是$O(n^4)$。
+
+考虑如何优化寻找增广路与计算顶标调整值的过程。因为交错树一直在扩大，所以每次我们不需要重新DFS尝试增广，而是以类似BFS的形式从交错树的叶子开始增广，并在这一过程中同时计算调整值。
+
+不难设计出如下过程：
+
+1. 从每个顶点出发尝试寻找增广路，至多寻找$O(n)$次。
+2. 对当前顶点$u$，设$u$的匹配点为$0$。设$v=0$并重复如下过程。
+3. 设$v$已被访问。
+4. 对$v$的匹配点的邻接表中的边$(u',v')$。
+5. 若$v'$已被访问则回到3。
+6. 若$(u',v')$不在相等子图中则令$d=\min(d,A(u')+B(v')-w(u',v'))$，并设$pre(v')=v$。
+7. 若$(u',v')$
+
+```cpp
+namespace matching {
+
+vector<int> g[N];
+int lnk[N], pre[N];
+bool vis[N];
+
+ll a[N], b[N], w[N][N], sl[N];
+
+vector<pair<pii, ll>> match(int nl, int nr, const vector<pair<pii, ll>>& es) {
+    nr = max(nl, nr);
+    fill_n(lnk + 1, nr, 0);
+    for (int i = 1; i <= nl; ++i)
+        fill_n(w[i] + 1, nr, 0);
+    for (pair<pii, ll> e : es)
+        w[e.first.first][e.first.second] = max(w[e.first.first][e.first.second], e.second);
+    for (int i = 1; i <= nl; ++i)
+        a[i] = *max_element(w[i] + 1, w[i] + nr + 1);
+    fill_n(b + 1, nr, 0);
+    for (int i = 1, j, u, vt = 0; i <= nl; ++i) {
+        fill_n(vis + 1, nr, 0);
+        fill_n(sl + 1, nr, inf);
+        fill_n(pre + 1, nr, 0);
+        lnk[0] = i;
+        for (j = 0; u = lnk[j]; j = vt) {
+            ll d = inf; vis[j] = 1;
+            for (int v = 1; v <= nr; ++v) {
+                ll t = a[u] + b[v] - w[u][v];
+                if (vis[v]) continue;
+                if (sl[v] > t) sl[v] = t, pre[v] = j;
+                if (sl[v] < d) d = sl[v], vt = v;
+            }
+            for (int v = 0; v <= nr; ++v) {
+                if (vis[v]) a[lnk[v]] -= d, b[v] += d;
+                else sl[v] -= d;
+            }
+        }
+        for (; j; j = pre[j]) lnk[j] = lnk[pre[j]];
+    }
+    vector<pair<pii, ll>> res;
+    for (int i = 1; i <= nr; ++i)
+        res.emplace_back(pii(lnk[i], i), a[lnk[i]] + b[i]);
+    return res;
+}
+
+}
+```
+
+## 二分图上的特殊顶点集与匹配
+
+### 最大独立集
+
+
