@@ -305,7 +305,7 @@ void conv(const vi& f, vi& g, int l, int r) {
 
 ### 有依赖的分治卷积
 
-给定运算$\bigoplus$，函数$t$与递推初值$f_0,g_0,g_1$和递推关系
+给定运算$\bigoplus$，函数$t$与递推初值$g_1$和递推关系
 
 $$f_i=\bigoplus_{j=1}^{i} g_j,g_i=t\left(\sum_{j=1}^{i-1}f_{i-j}g_j\right)$$
 
