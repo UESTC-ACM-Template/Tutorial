@@ -115,11 +115,11 @@ vi pmul(const vi& p1, const vi& p2, int n = 0) {
     if (n && n3 > n) p3.resize(n); return p3;
 }
 
-vi inv(const vi& p1) {
+vi pinv(const vi& p1) {
     int n1 = p1.size(), n2 = (n1 + 1) >> 1;
     if (n1 == 1) return { inv(p1[0]) };
     else {
-        vi p2 = inv(vi(p1.begin(), p1.begin() + n2));
+        vi p2 = pinv(vi(p1.begin(), p1.begin() + n2));
         init(n1 << 1);
         copy_n(p1.begin(), n1, px); fill(px + n1, px + m, 0);
         copy_n(p2.begin(), n2, py); fill(py + n2, py + m, 0);
@@ -498,6 +498,17 @@ $$
 
 给定$f(x)$，求$g(x)$使得$f(x)g(x) \equiv 1 \mod x^{n}$。
 
+原始形式：
+
+$$g_0=f_0^{-1},\sum_{j=0}^{i}f_jg_{i-j}=0$$
+
+即
+
+$$g_i=\begin{cases}
+f_0^{-1} & i=0\\
+-f_0^{-1}\sum_{j=1}^{i}f_jg_{i-j} & i \geq 1
+\end{cases}$$
+
 考虑牛顿迭代：设$t(g)=\frac 1g-f$，则迭代方程为
 
 $$
@@ -534,6 +545,23 @@ vi inv(const vi& p1) {
 
 其中$q(x)$为$n-m+1$次多项式，$r(x)$为$m-1$次多项式。
 
+原始形式：直接模拟$O(n^2)$的多项式除法/取模
+
+```cpp
+pair<vi, vi> div(const vi& p1, const vi& p2) {
+    int n1 = p1.size(), n2 = p2.size();
+    if (n1 < n2) return { vi(), p1 };
+    vi p3(n1 - n2 + 1, 0), p4 = p1;
+    for (int i = n1 - 1; i >= n2 - 1; --i) {
+        p3[i - n2 + 1] = mul(p4[i], inv(p2[n2 - 1]));
+        for (int j = 0; j != n2; ++j)
+            p4[i - n2 + 1 + j] = sub(p4[i - n2 + 1 + j], mul(p2[j], p3[i - n2 + 1]));
+    }
+    while (!p4.empty() && p4.back() == 0) p4.pop_back();
+    return { p3, p4 };
+}
+```
+
 考虑将$f(x)$的系数前后翻转
 
 $$f_R(x)=x^{n-1}f(\frac 1x)=\sum_{i=0}^{n-1}a_ix^{n-i-1}$$
@@ -569,23 +597,6 @@ pair<vi, vi> div(const vi& p1, const vi& p2) {
 ```
 
 注：`first`是$q(x)$，`second`是$r(x)$。
-
-注2：$O(n^2)$的多项式除法/取模可直接模拟
-
-```cpp
-pair<vi, vi> div(const vi& p1, const vi& p2) {
-    int n1 = p1.size(), n2 = p2.size();
-    if (n1 < n2) return { vi(), p1 };
-    vi p3(n1 - n2 + 1, 0), p4 = p1;
-    for (int i = n1 - 1; i >= n2 - 1; --i) {
-        p3[i - n2 + 1] = mul(p4[i], inv(p2[n2 - 1]));
-        for (int j = 0; j != n2; ++j)
-            p4[i - n2 + 1 + j] = sub(p4[i - n2 + 1 + j], mul(p2[j], p3[i - n2 + 1]));
-    }
-    while (!p4.empty() && p4.back() == 0) p4.pop_back();
-    return { p3, p4 };
-}
-```
 
 ### 开根号
 
@@ -637,7 +648,11 @@ vi sqrt(const vi& p1) {
 
 前置：求逆，求导，积分
 
-给定$f(x)$，求$g(x)=\ln f(x)$。
+给定$f(x)$，求$g(x)=\ln f(x) \mod x^n$。
+
+原始形式：
+
+$$\ln f(x)=\sum_{j=1}^{+\infty}(-1)^{j+1}\frac{f(x)^j}{j}$$
 
 $$g(x)=\ln f(x)=\int_0^{x}\frac{f'(t)}{f(t)}dt$$
 
@@ -654,6 +669,10 @@ vi log(const vi& p1) {
 前置：卷积，对数
 
 给定$f(x)$，求$g(x)=\exp f(x) \mod x^n$。其中$f(0)=a_0=0$。
+
+原始形式：
+
+
 
 考虑牛顿迭代：设$t(g)=\ln g-f$，则迭代方程为
 

@@ -1,5 +1,27 @@
 # 生成函数
 
+## 幂级数
+
+$$\frac 1 {1-x}=\sum_{i=0}^{+\infty}x^i=1+x+x^2+\cdots$$
+
+$$\frac x{(1-x)^2}=\sum_{i=0}^{+\infty}nx^n=x+2x^2+3x^3+\cdots$$
+
+$$\frac {x(x+1)}{(1-x)^3}=\sum_{i=0}^{+\infty}n^2x^n=x+4x^2+9x^3+\cdots$$
+
+$$\exp x=\sum_{i=0}^{+\infty} \frac {x^i}{i!}=1+x+\frac {x^2}{2}+\frac {x^3}{6}+\cdots$$
+
+$$-\log {(1-x)}=\sum_{i=1}^{+\infty}\frac {x^n}n=x+\frac x2 + \frac {x^3} 3+\cdots$$
+
+$$(1+x)^n=\sum_{i=0}^{n}\binom ni x^i$$
+
+### 多元幂级数
+
+$$\frac {1}{1-(1+x)y}=\sum_{i=0}^{+\infty}(1+x)^iy^i=\sum_{i=0}^{+\infty}\sum_{j=0}^{i} \binom ij x^jy^i$$
+
+## 常见变换
+
+$$f'(x)=\sum_{i=0}^{+\infty}(i+1)a_{i+1}x^i=a_1+2a_2x+3a_3x+\cdots$$
+
 ## 一般生成函数(OGF)
 
 $$f(x)=\sum_{i=0}^{+\infty}a_i x^i$$
@@ -51,3 +73,4 @@ $$h(x)=f(x)g(x)=\sum_{i=0}^{+\infty}\left(\sum_{j=0}^i\frac{a_j}{j!}\frac{b_{i-j
 大小为$i$的排列有$a_i$种，现在计算大小为$i$的由一个或多个排列组成的排列方案。
 
 $$g(x)=\sum_{j=1}^{+\infty}\frac{f(x)^j}{j!}$$
+

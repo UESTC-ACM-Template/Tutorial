@@ -93,32 +93,6 @@ dbl det(mat a) {
 
 ## 线性空间与线性算子
 
-定义：线性空间是一个四元组$<\mathbb F, V, +, \cdot>$，其中$+:V \times V \rightarrow V, \cdot: \mathbb F \times V \rightarrow V$且满足8条公理：
-
-第一组（群公理）
-
-结合律：$\forall \vec x, \vec y, \vec z \in V,\vec x + (\vec y + \vec z) = (\vec x + \vec y) + \vec z$
-
-单位元存在性：$\exist \vec 0 \in V \forall \vec x \in V,\vec x + \vec 0 = \vec x$
-
-逆元存在性：$\forall \vec x \in V \exists \vec y \in V,\vec x + \vec y = \vec 0$
-
-交换律：$\forall \vec x, \vec y \in V, \vec x + \vec y = \vec y + \vec x$
-
-即$<V,+>$是一个交换群。
-
-第二组（线性公理）
-
-结合律：$\forall k_1, k_2 \in \mathbb F\forall \vec x \in V,k_1(k_2 \vec x)=(k_1 k_2)\vec x$
-
-幺元存在性：$\forall \vec x \in V,1 \vec x=\vec x$
-
-向量分配律：$\forall k_1, k_2 \in \mathbb F \forall \vec x \in V,(k_1 + k_2) \vec x =k_1 \vec x + k_2 \vec x$
-
-标量分配律：$\forall k \in \mathbb F \forall \vec x_1, \vec x_2 \in V,k(\vec x_1 + \vec x_2)=k\vec x_1 + k\vec x_2$
-
-定义：线性算子是线性空间之间的函数
-
 ### 子空间投影
 
 ## 特征值与特征向量

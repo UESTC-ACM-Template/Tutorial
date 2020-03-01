@@ -68,7 +68,41 @@ $$
 
 考虑欧拉变换的定义可写出OGF相关的方程：
 
-$$f(x)=x \mathscr E(f(x))$$
+$$f(x)=x \mathscr E(f(x))=x \exp \left( \sum_{j=1}^{+\infty} \frac {f(x^j)}{j} \right)$$
+
+两边取对数
+
+$$\ln f(x)= \ln x + \sum_{j=1}^{+\infty}\frac{f(x^j)}{j}$$
+
+两边求导
+
+$$\frac{f'(x)}{f(x)}=\frac 1 x+ \sum_{j=1}^{+\infty}x^{j-1}f'(x^j)$$
+
+$$x f'(x)=f(x)\left(1+\sum_{j=1}^{+\infty}x^jf'(x^j)\right)$$
+
+设
+
+$$g(x)=\sum_{j=1}^{+\infty}x^jf'(x^j)$$
+
+可得
+
+$$b_i=\sum_{j | i}ia_i$$
+
+$$i a_i=a_i+\sum_{j=1}^{i-1}a_jb_{i-j}$$
+
+$$a_i=\frac 1{i-1}\sum_{j=1}^{i-1}a_jb_{i-j}$$
+
+注：这里$a_0=b_0=0,a_1=1$。
+
+### 无标号无根树计数
+
+统计方法为无标号有根树的数量减去根不是重心的无标号有根树的数量。
+
+若根不是重心，则根有一个大小至少为$\left \lfloor \frac n2 \right \rfloor + 1$的子树。枚举该子树大小可得
+
+$$g_n=f_n-\sum_{i=\left \lfloor \frac n2 \right \rfloor + 1}^{n-1}f_if_{n-i}$$
+
+注意到有两个重心的时候，有一类树被统计了两次。即有两个重心且两边不同构的树。该类树的数量为$\binom {f_{\frac n2}}{2}$，减去即可。
 
 ## 图计数
 
