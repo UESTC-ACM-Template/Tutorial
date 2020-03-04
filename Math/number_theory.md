@@ -59,7 +59,9 @@
 
 总结一下，二元一次不定方程$ax+by=c$的解集是
 
-$$\{(x,y)|k \in \Z, x=\frac{kb+cu}{d},y=\frac{-ka+cv}{d}\}$$
+$$
+\{(x,y)|k \in \Z, x=\frac{kb+cu}{d},y=\frac{-ka+cv}{d}\}
+$$
 
 其中$u,v,d$为使用扩展欧几里得算法解$au+bv=d$所得。
 
@@ -83,9 +85,7 @@ $$\{(x,y)|k \in \Z, x=\frac{kb+cu}{d},y=\frac{-ka+cv}{d}\}$$
 
 由同余的意义可得，一次同余方程的解集与不定方程$ax + my = b$的解集相同，即$x=\frac{km+bu}{d}$，也可写成$$x \equiv \frac {bu}{d} \mod \frac md$$
 
-在模$m$的意义下为以下同余类：
-
-$$\overline{\frac md+\frac {bu}d},\overline{\frac {2m}d+\frac {bu}d}，\cdots$$
+在模$m$的意义下为以下同余类：$$\overline{\frac md+\frac {bu}d},\overline{\frac {2m}d+\frac {bu}d}，\cdots$$
 
 当$b=1,\gcd(a,m)=1$时一定只有一个解，此时称$x$为$a$在模$m$意义下的乘法逆。
 
@@ -106,9 +106,14 @@ $$
 
 定理（中国剩余定理）：当$m_i$两两互质时，方程组有解
 
-$$x \equiv \sum_{i=1}^{n} b_iu_iv_i \mod M$$
+$$
+x \equiv \sum_{i=1}^{n} b_iu_iv_i \mod M
+$$
 
-其中$$M=\prod_{i=1}^{n}m_i,u_i=\frac{M}{m_i},u_iv_i \equiv 1 \mod m_i$$
+其中
+$$
+M=\prod_{i=1}^{n}m_i,u_i=\frac{M}{m_i},u_iv_i \equiv 1 \mod m_i
+$$
 
 证明：考虑第$i$项，因为$\gcd(u_i, m_i)=1$，所以$v_i$存在且唯一。因为当$i \neq j$时有$m_j|u_i$，所以$b_iu_iv_i \equiv 0 \mod m_j$，否则有$b_iu_iv_i \equiv b_i \mod m_i$。因此第$i$项对第$i$个方程的贡献是$b_i$，对其他方程都是$0$。
 
@@ -142,7 +147,9 @@ $$
 
 解得
 
-$$x\equiv b_1+\frac{(b_2-b_1)um_1}{d} \mod \frac{m_1m_2}{d}$$
+$$
+x\equiv b_1+\frac{(b_2-b_1)um_1}{d} \mod \frac{m_1m_2}{d}
+$$
 
 ## 原根与离散对数
 
