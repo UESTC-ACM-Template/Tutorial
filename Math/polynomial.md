@@ -672,6 +672,10 @@ vi log(const vi& p1) {
 
 原始形式：
 
+$$
+\exp f(x)=\sum_{i=0}^{\infty}\frac{f(x)^i}{i!}\\
+b_i=\sum_{}
+$$
 
 
 考虑牛顿迭代：设$t(g)=\ln g-f$，则迭代方程为
