@@ -277,6 +277,14 @@ $$
 
 证明：由上式显然。
 
+命题：$d(n)$的前缀和是$O(n \log n)$级别的。
+
+证明：
+$$
+\sum_{i=1}^nd(n)=\sum_{i=1}^n\sum_{j | i}1=\sum_{j=1}^n\sum_{j | i}1=\sum_{j=1}^n\left\lfloor\frac nj \right\rfloor \leq n\sum_{j=1}^n\frac1j =O(n\log n)
+$$
+
+
 ### 欧拉函数
 
 定义（欧拉函数）：$\varphi(n)$为$1$到$n-1$中与$n$互质的数的数量。
@@ -293,42 +301,68 @@ $$
 
 证明：由上式显然。
 
+命题：$\sum_{d|n}\varphi(d)=n$
+
+证明：
+$$
+\sum_{d|n}\varphi(d)=\sum_{d|n}\varphi\left(\frac nd\right)=\sum_{d|n}\sum_{i=1}^{\frac nd}[\gcd\left(i,\frac nd\right)=1]\\
+=\sum_{d|n}\sum_{k=1}^n[\gcd(k,n)=d]=n
+$$
+注：$\varphi(n/d)$等于$1,2,\cdots,n$内和$n$的$\gcd$为$d$的数的数量。
+
+命题：$n$以内的欧拉函数值可在$O(n \log n)$的时间复杂度内计算出来。
+
+由上一个命题可得$\varphi(n)=n-\sum_{d|n,d \neq n}\varphi(d)$。
+
+```cpp
+int phi[N];
+void get_phi(int n) {
+    for (int i = 1; i <= n; ++i) {
+        phi[i] = i;
+        for (int j = 2 * i; j <= n; j += i)
+            phi[j] -= phi[i];
+    }
+}
+```
+
 ### 默比乌斯函数
 
 定义（默比乌斯函数）：
 $$
-\sum_{d|n}\mu(d)=[n =1]
+\mu(n)=\begin{cases}(-1)^{k} & n=p_1p_2\cdots p_k\\1&n=1\\0&else\end{cases}
 $$
-命题：$\mu(1)=1$。证明显然。
+
+命题：若$n$有平方因子，则$\mu(n)=0$。由定义显然。
 
 命题：默比乌斯函数是积性函数。
 
-证明：考虑第二类归纳法：
-$$
-\mu(n_1n_2)=\mu(n_1n_2)+\sum_{d_1|n_1}\mu(d_1)\sum_{d_2|n_2}\mu(d_2)=\mu(n_1n_2)+\sum_{d|n_1n_2,d \neq n_1n_2}\mu(d_1d_2)+\mu(n_1)\mu(n_2)\\
-=\sum_{d|n_1n_2}\mu(d)+\mu(n_1)\mu(n_2)=\mu(n_1)\mu(n_2)
-$$
-命题：若$n$为质数，则$\mu(n)=-1$。证明显然。
+证明：若$a,b$中任意一个有平方因子，则$ab$也有平方因子，因此$\mu(ab)=\mu(a)\mu(b)=0$。
 
-命题：若$n$为$k$个质数的积，则$\mu(n)=(-1)^{k}$。证明显然。
+若$a,b$均没有平方因子且互质，则$ab$也能写成一串不同质数的乘积，因此$\mu(n)=(-1)^{k_a+k_b}=(-1)^{k_a}(-1)^{k_b}=\mu(a)\mu(b)$。得证。
 
-命题：若$n=p^e(e \geq 2)$，则$\mu(n)=0$。
+命题：$\sum_{d|n}\mu(n)=[n=1]$。
 
-证明：考虑第二类归纳法：
+证明：$n=1$时显然成立。
 
-当$e=2$时有$\mu(p^2)=-\mu(1)-\mu(p)=0$
+当$n \neq 1$时，设$n$有$k$个不同的质因子$p_1,p_2,\cdots,p_k$，设该集合为$S=\{p_i|1 \leq i \leq k \} $则上式可写成
 $$
-\mu(p^e)=-\sum_{i=0}^{e-1}\mu(p^i)=-\mu(1)-\mu(p)=0
+\sum_{S \subseteq T}(-1)^{|S|}=\sum_{i=0}^{k}\binom ki(-1)^i=(1-1)^k=0
 $$
-命题：若存在$p$使得$p^2|n$，则$\mu(n)=0$。证明显然。
+注：由定义有$\mu$在有平方因子的$n$的因子处的取值为$0$。
 
-由此得到默比乌斯函数的另一个等价定义：
-$$
-\mu(n)=\begin{cases}
-(-1)^{k} & n=p_1p_2\cdots p_k\\
-0&else
-\end{cases}
-$$
+命题：$n$以内的默比乌斯函数值可在$O(n \log n)$的时间复杂度内计算出来。
+
+由上个命题可得$\mu(n)=[n=1]-\sum_{d|n,d \neq n}\mu(d)$
+
+```cpp
+int mu[N];
+void get_mu(int n) {
+    mu[1] = 1;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 2 * i; j <= n; j += i)
+            mu[j] -= mu[i];
+}
+```
 
 ### 狄利克雷卷积
 
@@ -378,11 +412,8 @@ $$
 
 命题：$\mu * 1=e$。由定义显然。
 
-命题：$\varphi *1=id$。证明：
-$$
-(\varphi * 1)(n)=\sum_{d|n}\varphi(d)=\sum_{d|n}\varphi\left(\frac nd\right)=\sum_{d|n}\sum_{i=1}^{\frac nd}[\gcd\left(i,\frac nd\right)=1]\\
-=\sum_{d|n}\sum_{k=1}^{\frac nd}[\gcd\left(kd,n\right)=d]=\sum_{d|n}\sum_{i=1}^n[\gcd(i,n)=d]=n
-$$
+命题：$\varphi *1=id$。因为$(\varphi * 1)(n)=\sum_{d|n}\varphi(d)=n$。
+
 命题：
 $$
 \sum_{d|n}\frac {\mu(d)}{d}=\frac{\varphi(n)}{n}
@@ -396,6 +427,8 @@ $$
 定理（默比乌斯反演）：对于积性函数$f$，设$g=f*1$，则$f=g*\mu$。
 
 证明：$g*\mu=(f*1)*\mu=f*(1*\mu)=f$。
+
+
 
 ## 原根与离散对数
 
