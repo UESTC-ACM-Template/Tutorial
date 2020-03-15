@@ -261,9 +261,51 @@ $$
 
 定义（顶和底）：给定实数$x$，将$\lfloor x \rfloor$定义为小于等于$x$的最大整数，$\lceil x\rceil$定义为大于等于$x$的最小整数。
 
+命题：对于正整数$a,b,c$有$\lfloor\lfloor a / b\rfloor /c \rfloor=\lfloor a/(bc)\rfloor$。
+
+证明：设$a = q_1b+r_1(0 \leq r_1 <b)$，$q_1=q_2c+r_2(0 \leq r_2 < c)$，因为$a=(q_2c+r_2)b+r_1=q_2bc+r_2b+r_1$，而$r_2b+r_1\leq (c-1)b+(b-1)=bc-1<bc$，所以$\lfloor\lfloor a / b\rfloor /c \rfloor=q_2=\lfloor a/(bc)\rfloor$。
+
+命题：对于正整数$n,x(x \leq \sqrt n)$有$\lfloor n / \lfloor n / x \rfloor \rfloor=x$。
+
+证明：设$n = qx +r(0 \leq r < x),n=tq+s(0 \leq s < q)$。因为$0 \leq r <x \leq \sqrt n\leq q$，所以$s=r,t=x$。
+
+命题：对于正整数$n,x(x<n)$，有$\lfloor n/ \lfloor n/\lfloor n/x\rfloor\rfloor\rfloor=\lfloor n/x\rfloor$。
+
+证明：若$x \leq \sqrt n$，则可将$\lfloor n/\lfloor n/x\rfloor\rfloor$换成$x$。否则$\lfloor n/x \rfloor \leq \sqrt n$，则可将外两层去掉。得证。
+
+命题：对于正整数$n,x(x<n)$，若存在$a$使得$\lfloor n/a\rfloor=x$，则$\max \{ a|\lfloor n/a \rfloor=x\}\leq \lfloor n/x \rfloor$。
+
+证明：设$n=ax+b(0 \leq b < a)=qx+r(0 \leq r < x)$，则$a = (r-b)/x+q \leq r/x+q<x/x+q=q+1$
+
+因此$a \leq q= \lfloor n/x \rfloor$。
+
+命题：对于正整数$n,u(u<n)$，$\max \{v|\lfloor n/v\rfloor=\lfloor n/u\rfloor\}=\lfloor n/\lfloor n/u\rfloor\rfloor$。
+
+因为$\lfloor n/\lfloor n/\lfloor n/u\rfloor\rfloor\rfloor=\lfloor n/u\rfloor$，且由上个命题有$v \leq \lfloor n/\lfloor n/u\rfloor\rfloor$，因此加上条件$x=\lfloor n/u\rfloor$后上一个命题中的等号成立。
+
 命题：对于正整数$n$，集合$S=\{\lfloor n/i \rfloor|1 \leq i \leq n\}$的大小为$2s-[\lfloor i/s\rfloor=s]$，其中$s=\lfloor \sqrt n \rfloor$。
 
+引理：对于正整数$n$，不大于$\sqrt n$的任意两个不相等的正整数$x,y$满足$\lfloor n/x \rfloor \neq \lfloor n/y \rfloor$。
 
+证明：设$n = qx+r(0 \leq r < x)$，则$\lfloor n/x \rfloor=q$。因为$q \geq \sqrt n \geq x > r$，所以$q(x+1)=qx+q>qx+r=n$。所以$\lfloor n/(x+1) \rfloor < \lfloor n/x \rfloor$。不妨设$x < y$，即得$\lfloor n/y \rfloor <\lfloor n/(y-1) \rfloor< \cdots < \lfloor n/x \rfloor$。得证。
+
+算法（整除分块）：由前两个条件我们可以在$O(\sqrt n)$内求出形如
+$$
+\sum_{x=1}^{n}f(\lfloor n/x\rfloor)
+$$
+的和式的值。（若$f$能$O(1)$求得）
+
+因为$\lfloor n/x \rfloor$的取值只有$O(\sqrt n)$种，且对于一个$l$我们可以直接求出相同取值的右端点$r=\lfloor n/ \lfloor n/l \rfloor \rfloor$。
+
+```
+int sum = 0;
+for (int l = 1, r; l <= n; l = r + 1) {
+	r = n / (n / l);
+	sum += (r - l + 1) * f(n / l);
+}
+```
+
+注：求值范围为$L \leq x \leq R$时也可以只用一次for完成。
 
 ## 积性函数与筛法
 
@@ -414,7 +456,7 @@ $$
 $$
 证明：由定义一层层展开即可。
 
-定义（单位函数）：$e(n)=[n==1]$。
+定义（单位函数）：$e(n)=[n=1]$。
 
 命题：对于任意数论函数$f$有$f * e=1$。
 
@@ -424,12 +466,20 @@ $$
 
 命题：$\mu * 1=e$。由定义显然。
 
+这个命题能让我们展开形如$[\gcd(x,y,z,\cdots)=1]$的部分进行化简。
+
+例1：求$m$以内与$n$互质的数的个数。
+$$
+f(m,n)=\sum_{i=1}^{m}[\gcd(i,n)=1]=\sum_{i=1}^me(\gcd(i,n))=\sum_{i=1}^m\sum_{e|\gcd(i,n)}\mu(e)\\=\sum_{i=1}^m\sum_{e|i \wedge e|n}\mu(e)=\sum_{e|n}\mu(e)\sum_{e|i\wedge i \leq m}1=\sum_{e|n}\mu(e)\left\lfloor\frac me \right\rfloor
+$$
+例2：求$m$以内与$n$的$\gcd$为$d$的数的个数
+$$
+g(m,n,d)=\sum_{i=1}^m[\gcd(i,n)=d]=\sum_{d|i \wedge i \leq m}[\gcd(i,n)=d]=\sum_{j=1}^{\lfloor m/d\rfloor}[\gcd(j,n/d)=1]=f(m/d,n/d);
+$$
 命题：$\varphi *1=id$。因为$(\varphi * 1)(n)=\sum_{d|n}\varphi(d)=n$。
 
-命题：
-$$
-\sum_{d|n}\frac {\mu(d)}{d}=\frac{\varphi(n)}{n}
-$$
+命题：$\sum_{d|n}\mu(d)/d=\varphi(n)/n$
+
 证明：
 $$
 \varphi(n)=(\varphi*1*\mu)(n)=(id*\mu)(n)=\sum_{d|n}\mu(d)\frac{n}{d}\\
@@ -438,11 +488,42 @@ $$
 
 定理（默比乌斯反演）：对于积性函数$f$，设$g=f*1$，则$f=g*\mu$。
 
+将每项写出来即是
+$$
+g(n)=\sum_{d|n}f(d) \Leftrightarrow f(n)=\sum_{d|n}\mu(n/d)g(d)
+$$
 证明：$g*\mu=(f*1)*\mu=f*(1*\mu)=f$。
+
+同时也有
+$$
+g(d)=\sum_{d|n}f(n) \Leftrightarrow f(d)=\sum_{d|n}\mu(n/d)g(n)
+$$
+证明：
+$$
+\sum_{d|n}\mu(n/d)g(n)=\sum_{d|n}\mu(n/d)\sum_{n|m}f(m)=\sum_{d|m}f(m)\sum_{d|n|m}\mu(n/d)\\=\sum_{d|m}f(m)\sum_{T|\frac md}\mu(t)=\sum_{d|m}f(m)[m/d=1]=f(d)
+$$
+例(CF1139D)：有一个空数列$\{ a \}$，每次向$\{ a \}$中加入一个范围在$[1,m]$内的随机整数，当$\{ a \}$中所有数的$\gcd$为$1$时停止，问停止时$\{ a \}$的长度$X$的期望值。
+$$
+E[X]=\sum_{i=1}^{\infty}iP[X=i]=\sum_{i=1}^{\infty}P[X\geq i]\\
+$$
+当$i=1$时$P[x\geq 1]=1$，否则$P[X \geq i+1]=P[X>i]$，即长度为$i$的值域在$[1,m]$内的随机数列的$\gcd$不为$1$的概率。
+
+设$f(d)$为$\gcd \{a\}=d$的数列$\{a\}$数量，$g(d)$为$d|\gcd\{a\}$的数列$\{a\}$数量，则有
+$$
+g(d)=\lfloor m/d \rfloor^i =\sum_{d|n}f(n)\Rightarrow f(d)=\sum_{d|n}\mu(n/d)g(n)=\sum_{d|n}\mu(n/d)\lfloor m/n\rfloor^i
+$$
+于是
+$$
+P[X>i]=\frac {1}{m^i} \left(m^i-f(1)\right)=\frac {1}{m^i} \left(m^i-\sum_{n \geq 1}\mu(n)\lfloor m/n \rfloor ^i\right)\\=\frac {1}{m^i} \left(m^i-m^i-\sum_{n \geq 2}\mu(n)\lfloor m/n \rfloor ^i\right)=-\frac {1}{m^i}\sum_{n=2}^m\mu(n)\lfloor m/n \rfloor ^i
+$$
+因此
+$$
+\sum_{i=1}^{\infty}P[X\geq i]=1+\sum_{i=1}^{\infty}P[X>i]=1+\sum_{i=1}^{\infty}\left(-\frac {1}{m^i}\sum_{n=2}^m\mu(n)\lfloor m/n \rfloor ^i\right)\\=1-\sum_{n=2}^m\mu(n)\sum_{i=1}^{\infty}(\lfloor m/n \rfloor/m)^i=1-\sum_{n=2}^m\mu(n)\frac{\lfloor m/n \rfloor/m}{1-\lfloor m/n \rfloor/m}=1+\sum_{n=2}^m\mu(n)\frac{\lfloor m/n \rfloor}{\lfloor m/n \rfloor-m}
+$$
 
 ### 欧拉筛
 
-前面提到的埃式筛的时间复杂度是$O(n \log \log n)$起步的，没能做到线性复杂度的原因是有一些合数可能被筛去多次（如$36$被$2$和$3$分别筛了一次）。
+前面提到的埃式筛的时间复杂度是$O(n \log \log n)$，没能做到线性复杂度的原因是有一些合数可能被筛去多次（如$36$被$2$和$3$分别筛了一次）。
 
 欧拉筛做到了线性的时间复杂度，即$O(n)$内找到$n$以内的所有质数。
 
@@ -519,9 +600,25 @@ $$
 S_h(n)=\sum_{i=1}^nh(i)=\sum_{i=1}^n\sum_{d|i}g(d)f\left(\frac id\right)=\sum_{d=1}^ng(d)\sum_{d|i,i \leq n}f\left(\frac id \right)=\sum_{d=1}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\\
 S_f(n)=\left(S_h(n)-\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\right)/g(1)
 $$
-递归求出$S_f(n)$的值。利用整除分块，最终的复杂度是$T(n)=\sum_{i=1}^\sqrt n{\sqrt i}=O(n^{3/4})$。
+递归求出$S_f(n)$的值。利用整除分块并记忆化，则计算$f(n)$时需要进行$2\sqrt n$次求和，因此最终的复杂度是
+$$
+T(n)=\sum_{i=1}^\sqrt n{\sqrt i}+\sum_{i=1}^{\sqrt n}\sqrt {n/i}\leq \int_0^\sqrt n\left(\sqrt n+\sqrt {n/i}\right)=O(n^{3/4})
+$$
+若利用欧拉筛提前筛出前$n^{2/3}$的值，则最终复杂度为
+$$
+T(n)=O(n^{2/3})+\sum_{i=1}^{\sqrt[3]{n}}\sqrt{n/i}=O(n^{2/3})
+$$
+例：设$f(n)=\varphi(n)n^2$，求$f(n)$的前缀和。$n \leq 10^9$。
 
-若利用欧拉筛提前筛出前$n^{2/3}$的值，则最终复杂度为$T(n)=O(n^{2/3})+\sum_{i=1}^{\sqrt[3]{n}}\sqrt{n/i}=O(n^{2/3})$。
+解：设$g=id^2$，则
+$$
+(f*g)(n)=\sum_{d|n}d^2\varphi\left(\frac nd \right)\frac{n^2}{d^2}=n^2\sum_{d|n}\varphi\left(\frac nd \right)=n^3
+$$
+
+
+
+
+
 
 
 
