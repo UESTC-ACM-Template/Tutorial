@@ -167,8 +167,6 @@ $$
 
 其中$u,v,d$为使用扩展欧几里得算法解$au+bv=d$所得。
 
-## 一次同余方程
-
 ### 一次同余方程
 
 模意义下的除法问题可以描述为解一次同余方程$ax \equiv b \mod m$。
@@ -190,6 +188,8 @@ $$
 \left((p-q)r^{-1}\right)a=(p-q)r^{-1}(p-r)/q\equiv(p-q)(r^{-1}p-1)q^{-1}\mod p\\
 =r^{-1}q^{-1}p^2-(r^{-1}+q^{-1})p+1\equiv1 \mod p
 $$
+
+递推边界条件为`inv[1]=1`。时间复杂度$O(n)$。
 
 ### 一次同余方程组
 
@@ -221,7 +221,7 @@ $$
 
 证明：考虑第$i$项，因为$\gcd(u_i, m_i)=1$，所以$v_i$存在且唯一。因为当$i \neq j$时有$m_j|u_i$，所以$b_iu_iv_i \equiv 0 \mod m_j$，否则有$b_iu_iv_i \equiv b_i \mod m_i$。因此第$i$项对第$i$个方程的贡献是$b_i$，对其他方程都是$0$。
 
-我们从另一个角度来考虑，即将两个一次同余方程合并。
+从另一个角度来考虑，即将两个一次同余方程合并。
 
 考虑不定方程
 
@@ -289,13 +289,13 @@ $$
 
 证明：设$n = qx+r(0 \leq r < x)$，则$\lfloor n/x \rfloor=q$。因为$q \geq \sqrt n \geq x > r$，所以$q(x+1)=qx+q>qx+r=n$。所以$\lfloor n/(x+1) \rfloor < \lfloor n/x \rfloor$。不妨设$x < y$，即得$\lfloor n/y \rfloor <\lfloor n/(y-1) \rfloor< \cdots < \lfloor n/x \rfloor$。得证。
 
-算法（整除分块）：由前两个条件我们可以在$O(\sqrt n)$内求出形如
+算法（整除分块）：由前两个条件可以在$O(\sqrt n)$内求出形如
 $$
 \sum_{x=1}^{n}f(\lfloor n/x\rfloor)
 $$
 的和式的值。（若$f$能$O(1)$求得）
 
-因为$\lfloor n/x \rfloor$的取值只有$O(\sqrt n)$种，且对于一个$l$我们可以直接求出相同取值的右端点$r=\lfloor n/ \lfloor n/l \rfloor \rfloor$。
+因为$\lfloor n/x \rfloor$的取值只有$O(\sqrt n)$种，且对于一个$l$可以直接求出相同取值的右端点$r=\lfloor n/ \lfloor n/l \rfloor \rfloor$。
 
 ```
 int sum = 0;
@@ -307,7 +307,7 @@ for (int l = 1, r; l <= n; l = r + 1) {
 
 注：求值范围为$L \leq x \leq R$时也可以只用一次for完成。
 
-## 积性函数与筛法
+## 积性函数
 
 定义（数论函数）：定义域在正整数上，且值域中元素能互相做加法和乘法（即在某个交换环中）的函数称为数论函数。
 
@@ -317,13 +317,17 @@ for (int l = 1, r; l <= n; l = r + 1) {
 
 命题：给定任意一个积性函数在所有质数的幂次$p^e$上的取值，则可以唯一确定这个积性函数。
 
-证明：对于任意正整数$n$，考虑$n$的质因子分解$n=\prod p_i^{q_i}$，则$f(n)=\prod f(p_i^{q_i})$。
+证明：对于任意正整数$n$，考虑$n$的质因子分解$\displaystyle n=\prod p_i^{q_i}$，则$\displaystyle f(n)=\prod f(p_i^{q_i})$。
+
+涉及到积性函数的计算中经常出现对某个函数$f$在某个数$n$的所有因子位置上的值求和，这个符号记为$\displaystyle \sum_{d|n}f(d)$。
+
+即对所有能够整除$n$的数$d$统计$f(d)$的和。
 
 ### 除数函数
 
 定义（除数函数）：$d(n)$为$n$的因子数量。
 
-命题：设$n$的质因子分解为$n=\prod p_i^{q_i}$，则$d(n)=\prod(q_i+1)$。
+命题：设$n$的质因子分解为$\displaystyle n=\prod p_i^{q_i}$，则$\displaystyle d(n)=\prod(q_i+1)$。
 
 证明：对于$n$的任意因子$x$，$x$的每个质因子的在$x$中幂次必然小于等于其在$n$中的幂次。因此对于在$n$中幂次为$q_i$的质因子，其在$n$的因子中有$q_i+1$种可能，且与其他质因子互相独立。
 
@@ -343,13 +347,13 @@ $$
 
 定义（欧拉函数）：$\varphi(n)$为$1$到$n-1$中与$n$互质的数的数量。
 
-命题：设$n$的质因子分解为$n=\prod p_i^{q_i}$，则$\varphi(n)=n\prod(1-\frac{1}{p_i})$。
+命题：设$n$的质因子分解为$\displaystyle n=\prod p_i^{q_i}$，则$\displaystyle \varphi(n)=n\prod(1-\frac{1}{p_i})$。
 
-证明：考虑容斥。设$n$的质因子分别是$p_1,p_2,\cdots,p_k$，则
+证明：考虑容斥。设$n$的质因子分别是$p_1,p_2,\cdots,p_k$，则$1$到$n$能被$p_i$整除的数的数量是$n/p_i$，能被$p_ip_j$整除的数量是$n/p_ip_j$，由此可以写出
 $$
 \varphi(n)=n-\sum_{1 \leq i \leq k}\frac n{p_i}+\sum_{1 \leq i < j \leq k}\frac n{p_ip_j}- \cdots=n\left(1-\frac{1}{p_1}\right)\left(1-\frac{1}{p_2}\right)\cdots\left(1-\frac{1}{p_k}\right)
 $$
-注：每一项的符号为$(-1)^{质因子数量}$
+注：将右边展开，每带上一个质因子都会乘上一个$-1$，因此每一项的符号为$(-1)^{质因子数量}$
 
 命题：欧拉函数是积性函数。
 
@@ -466,7 +470,7 @@ $$
 
 命题：$\mu * 1=e$。由定义显然。
 
-这个命题能让我们展开形如$[\gcd(x,y,z,\cdots)=1]$的部分进行化简。
+这个命题能让展开形如$[\gcd(x,y,z,\cdots)=1]$的部分进行化简。
 
 例1：求$m$以内与$n$互质的数的个数。
 $$
@@ -502,13 +506,13 @@ $$
 $$
 \sum_{d|n}\mu(n/d)g(n)=\sum_{d|n}\mu(n/d)\sum_{n|m}f(m)=\sum_{d|m}f(m)\sum_{d|n|m}\mu(n/d)\\=\sum_{d|m}f(m)\sum_{T|\frac md}\mu(t)=\sum_{d|m}f(m)[m/d=1]=f(d)
 $$
-例(CF1139D)：有一个空数列$\{ a \}$，每次向$\{ a \}$中加入一个范围在$[1,m]$内的随机整数，当$\{ a \}$中所有数的$\gcd$为$1$时停止，问停止时$\{ a \}$的长度$X$的期望值。
+例(CF1139D)：有一个空数列$\{ a \}$，每一轮向$\{ a \}$中加入一个范围在$[1,m]$内的随机整数，当$\{ a \}$中所有数的$\gcd$为$1$时停止，问停止时$\{ a \}$的长度$X$的期望值。
 $$
 E[X]=\sum_{i=1}^{\infty}iP[X=i]=\sum_{i=1}^{\infty}P[X\geq i]\\
 $$
 当$i=1$时$P[x\geq 1]=1$，否则$P[X \geq i+1]=P[X>i]$，即长度为$i$的值域在$[1,m]$内的随机数列的$\gcd$不为$1$的概率。
 
-设$f(d)$为$\gcd \{a\}=d$的数列$\{a\}$数量，$g(d)$为$d|\gcd\{a\}$的数列$\{a\}$数量，则有
+设$f(d)$为$d=\gcd \{a\}$的数列$\{a\}$数量，$g(d)$为$d|\gcd\{a\}$的数列$\{a\}$数量，则有
 $$
 g(d)=\lfloor m/d \rfloor^i =\sum_{d|n}f(n)\Rightarrow f(d)=\sum_{d|n}\mu(n/d)g(n)=\sum_{d|n}\mu(n/d)\lfloor m/n\rfloor^i
 $$
@@ -520,6 +524,57 @@ $$
 $$
 \sum_{i=1}^{\infty}P[X\geq i]=1+\sum_{i=1}^{\infty}P[X>i]=1+\sum_{i=1}^{\infty}\left(-\frac {1}{m^i}\sum_{n=2}^m\mu(n)\lfloor m/n \rfloor ^i\right)\\=1-\sum_{n=2}^m\mu(n)\sum_{i=1}^{\infty}(\lfloor m/n \rfloor/m)^i=1-\sum_{n=2}^m\mu(n)\frac{\lfloor m/n \rfloor/m}{1-\lfloor m/n \rfloor/m}=1+\sum_{n=2}^m\mu(n)\frac{\lfloor m/n \rfloor}{\lfloor m/n \rfloor-m}
 $$
+
+
+
+## $\Z/n\Z$的结构
+
+```mermaid
+stateDiagram
+	M1: { 1, 5, 7, 11 }
+	M2: { 2, 10 }
+	M3: { 3, 9 }
+	M4: { 4, 8 }
+	M6: { 6 }
+	M12: { 0 }
+	
+	M1 --> M2
+	M1 --> M3
+	M2 --> M4
+	M2 --> M6
+	M3 --> M6
+	M4 --> M12
+	M6 --> M12
+	
+	I1: { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 }
+	I2: { 0, 2, 4, 6, 8, 10 }
+	I3: { 0, 3, 6, 9 }
+	I4: { 0, 4, 8 }
+	I6: { 0, 6 }
+	I12: { 0 }
+	
+	I2 --> I1
+	I3 --> I1
+	I4 --> I2
+	I6 --> I2
+	I6 --> I3
+	I12 --> I4
+	I12 --> I6
+```
+
+$\Z /n \Z$是模$n$意义下的$n$个剩余类与模$n$加法，模$n$乘法组成的代数结构，这个结构完整的刻画了模运算的性质。
+
+对于模意义下的加法，模$n$意义下的$n$个剩余类构成了一个群$\Z_n$。$\Z_n$同构于循环群$C_n$。
+
+对于$n$的每个因子$d$，由$d$倍数剩余类集合$\{\overline{kd}|0 \leq k < n/d\}$构成了$\Z_n$的子群。这个子群同构于$\Z_{n/d}$，即$C_{n/d}$。
+
+子群之间的包含关系是一个典型的偏序关系，由此可以画出哈斯图。如上面的$\Z_{12}$。
+
+## 筛法
+
+### 区间筛
+
+
 
 ### 欧拉筛
 
@@ -595,38 +650,174 @@ $\varphi(n):$`get_f(p,e,q)=(e==0?1:(q/p)*(p-1))`。
 
 #### 杜教筛
 
-给定积性函数$f$，若存在积性函数$g,h$满足$f*g=h$且$g$和$h$的前缀和很好求出，则可用下面的式子
+给定积性函数$f$，若存在积性函数$g,h$满足$f*g=h$且$g$和$h$的前缀和能够很快求出，则可用下面的式子
 $$
-S_h(n)=\sum_{i=1}^nh(i)=\sum_{i=1}^n\sum_{d|i}g(d)f\left(\frac id\right)=\sum_{d=1}^ng(d)\sum_{d|i,i \leq n}f\left(\frac id \right)=\sum_{d=1}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\\
-S_f(n)=\left(S_h(n)-\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\right)/g(1)
+S_h(n)=\sum_{i=1}^nh(i)
+=\sum_{i=1}^n\sum_{d|i}g(d)f\left(\frac id\right)
+=\sum_{d=1}^ng(d)\sum_{d|i,i \leq n}f\left(\frac id \right)\\
+=\sum_{d=1}^ng(d)\sum_{j=1}^{\left \lfloor \frac nd \right \rfloor}f(j)
+=\sum_{d=1}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)
+=g(1)S_f(n)+\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\\
+S_f(n)=\left(S_h(n)-\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\right)/g(1)=S_h(n)-\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)
 $$
 递归求出$S_f(n)$的值。利用整除分块并记忆化，则计算$f(n)$时需要进行$2\sqrt n$次求和，因此最终的复杂度是
 $$
-T(n)=\sum_{i=1}^\sqrt n{\sqrt i}+\sum_{i=1}^{\sqrt n}\sqrt {n/i}\leq \int_0^\sqrt n\left(\sqrt n+\sqrt {n/i}\right)=O(n^{3/4})
+T(n)=\sum_{i=1}^\sqrt n{\sqrt i}+\sum_{i=1}^{\sqrt n}\sqrt {n/i}\leq \int_0^\sqrt n\left(\sqrt n+\sqrt {n/i}+C\right)=O(n^{3/4})
 $$
-若利用欧拉筛提前筛出前$n^{2/3}$的值，则最终复杂度为
+注：其中$C$为某个小常数。
+
+若利用欧拉筛提前筛出前$n^{2/3}$的值，则最终的时间复杂度为
 $$
 T(n)=O(n^{2/3})+\sum_{i=1}^{\sqrt[3]{n}}\sqrt{n/i}=O(n^{2/3})
 $$
+
+记忆化可以不用`unordered_map`，因为只需要存储$S_f$在$\lfloor n/x \rfloor$位置的取值，所以对于$x \geq \sqrt n$可以将$S_f(x)$放在记忆化数组的下标$\lfloor n/x\rfloor$处。
+
+```cpp
+namespace sieve {
+
+const int N = 1000001;
+int sf[N];				//	f的前缀和，用欧拉筛取得
+ll sg(ll n);			//	计算g的前缀和
+ll sh(ll n);			//	计算h的前缀和
+void eulerian_sieve();	//	...
+    
+int m[N]; ll n;
+
+int cal(ll x) {
+    if (x < N) return sf[x];
+    int& sum = m[n / x];
+    if (sum != -1) return sum;
+    sum = sh(x);
+    for (ll l = 2, r; l <= x; l = r + 1) {
+        r = x / (x / l);
+        sum = sub(sum, mul(sub(sg(r % P), sg((l - 1) % P)), cal(x / l)));
+    }
+    return sum;
+}
+
+//	init之后可O(1)获得所有n/x位置的取值
+void init(ll n_) {
+    n = n_;
+    fill_n(m, (int)sqrt(n) + 2, -1);
+    cal(n);
+}
+    
+}
+```
+
 例：设$f(n)=\varphi(n)n^2$，求$f(n)$的前缀和。$n \leq 10^9$。
 
 解：设$g=id^2$，则
 $$
-(f*g)(n)=\sum_{d|n}d^2\varphi\left(\frac nd \right)\frac{n^2}{d^2}=n^2\sum_{d|n}\varphi\left(\frac nd \right)=n^3
+(f*g)(n)=\sum_{d|n}d^2\varphi\left(\frac nd \right)\frac{n^2}{d^2}=n^2\sum_{d|n}\varphi\left(\frac nd \right)=n^3=h(n)
 $$
 
+#### min25筛
+
+给定积性函数$f$，若$f$在质数位置上的取值是一个多项式$P_f(x)$且对于任意质数$p$，$f(p^e)$可以快速求，则可在$O(n^{3/4}/\log n)$的时间复杂度内求出$\displaystyle \sum_{i =1}^nf(i)$。
+
+算法共分两步。
+
+第一步筛出$f$在$n$以内质数位置上的取值之和
+
+第二步将合数位置上的取值加回去。
+
+#### min25筛：求$g_k(i,n)$
+
+定义：
+
+$Primes$为质数集合，$p_i$为第$i$个质数，$\pi(x)$为$x$以内的质数个数，$m_x$为$x$的最小质因子
+
+$S_f(n)$为$f$的前缀和，即$\displaystyle S_f(n)=\sum_{i =1}^nf(i)$
+
+$S(i,n)$为埃式筛运行过程中筛掉最小质因子属于前$i$个质数的合数（$1$也是合数！）后剩下来的数集
+
+$f(x)$在质数位置取值相同的多项式$\displaystyle P_f(x)=\sum_{k=0}^ma_kx^k$
+
+$g_k(i,n)$为$x^k$在$S(i,n)$处的取值之和，即$\displaystyle g_k(i,n)=\sum_{x \in S(i,n)}x^k$
+
+下标从$1$开始的等幂求和$\displaystyle S_k(x)=\sum_{x=1}^nx^k$
+
+则由定义有
+$$
+S(i,n)=[n]-\{x|x \notin Primes \wedge m_x \leq p_i\}=\{x|x\leq n \wedge (x \in Primes \vee m_x>p_i)\}\\
+$$
+接下来考虑递推$g(i,n)$。初始条件为
+$$
+g_k(0,n)=S_k(n)-1
+$$
+因为大于$\sqrt n$的质数无法筛去$n$以内的任何合数，所以
+$$
+\sum_{x \in Primes \wedge x \leq n}x^k=g_k(\infty,n)=g_k(\pi(\sqrt x),n)
+$$
+因此递推到不大于$\sqrt n$的质数就可以终止了。
+
+不难看出要求的即是
+$$
+\sum_{x \in Primes\wedge x \leq n}f(x)=\sum_{x \in Primes\wedge x \leq n}P_f(x)=\sum_{x \in Primes\wedge x \leq n}\sum_{k=0}^ma_kx^k\\=\sum_{i=0}^ma_k\sum_{x \in Primes\wedge x \leq n}x^k=\sum_{k=0}^ma_k g_k(\infty,n)=\sum_{k=0}^ma_k g_k(\pi(\sqrt x),n)
+$$
+从$g(i-1,n)$转移到$g(i,n)$过程中筛去的是最小质因子为$p_i$的合数（余下部分的质因子均大于$p_i$）。
+$$
+S(i,n)=S(i-1,n)-\{x|x \notin Primes \wedge m_x=p_i\}\\
+g_k(i,n)=g_k(i-1,n)-\sum_{x,m_x =p_i}x^k\\
+=g_k(i-1,n)-\sum_{e=1,p_i^e \leq n}p_i^k\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k
+$$
+注意到满足条件$m_x \geq p_i \wedge x\leq \lfloor n / p_i^e \rfloor$的数集就是$S(i-1,\lfloor n / p_i^e \rfloor)$去掉前$i-1$个质数
+
+定义$x^k$在前$i$个质数位置上的取值之和为$T_k(i)$，即$T_k(i)=\sum_{j=1}^{i}p_j^k$
+
+于是
+$$
+\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k=g_k(i,\lfloor n / p_i \rfloor)-T_k(i)\\
+$$
+
+带入即可得第一步的递推式
+$$
+g_k(i,n)=g_k(i-1,n)-p_i^{k}\left[g_k(i,\lfloor n / p_i \rfloor)-T_k(i)\right]
+$$
+因为有$\lfloor \lfloor a/b\rfloor/c\rfloor=\lfloor a/(bc)\rfloor$，所以只要求出所有$g_k(i,\lfloor n/x \rfloor)$即可。
+
+```cpp
+namespace sieve {
+    
+bool ip[N]; ll ps[N], pc;
+void eulerian_sieve();
+
+int sk(int k, int n);	//	从下标1开始的等幂求和
+
+ll n, sq; int r;		//	sq为sqrt(n)，r为sq小于等于sq的质数个数。
+ll w[N]; int c;			//	w[1...c]为所有n/x的不同取值，从大到小。
+int id1[N], id2[N];		//	如果x>sq，则g_k(i,n)其在w中的位置为id1[x],否则为id2[n/x]
+int t[K][N], g[K][N];	//	每一轮直接在g[K][N]上递推
+
+inline ll id(ll x) { return x <= sq ? id1[x] : id2[n / x]; }
+
+void init(ll n_) {
+    if (!pc) eulerian_sieve();
+    n = n_; sq = sqrt(n_); c = 0;
+    for (r = 1; ps[r] <= sq; ++r);
+    for (int i = 1; i <= r; ++i)
+        for (int k = 0, e = 1; k != K; ++k, e = mul(e, ps[i]))
+            t[k][i] = add(t[k][i - 1], e);
+    for (ll l = 1, r; l <= n; l = r + 1) {
+        ll v = w[++c] = n / l; r = n / v;
+        (v <= sq ? id1[v] : id2[n/v]) = c;
+        for (int k = 0; k != K; ++k)
+            g[k][c] = sub(sk(k, v % P), 1);
+    }
+    for (int i = 1; i <= r; ++i) {
+        ll p = ps[i];
+        for (int j = 1; j <= c && p * p <= w[j]; ++j) {
+            for (int k = 0, e = 1; k != K; ++k, e = mul(e, ps[i])) {
+                g[k][j] = sub(g[k][j], mul(e, sub(g[k][id(w[j] / p)], t[k][i - 1])));
+    }
+}
+    
+}
+```
 
 
-
-
-
-
-
-## 原根与离散对数
-
-
-
-## $\Z/n\Z$的结构
 
 ## 素性测试与因子分解
 
