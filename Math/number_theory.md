@@ -644,11 +644,9 @@ $\varphi(n):$`get_f(p,e,q)=(e==0?1:(q/p)*(p-1))`。
 
 上面的代码对于$\mu,\varphi$等简单的积性函数还能进一步简化。
 
-### 积性函数前缀和
+### 杜教筛
 
 有一些问题涉及到求解积性函数的前缀和，且线性的时间复杂度无法满足要求。
-
-#### 杜教筛
 
 给定积性函数$f$，若存在积性函数$g,h$满足$f*g=h$且$g$和$h$的前缀和能够很快求出，则可用下面的式子
 $$
@@ -713,7 +711,7 @@ $$
 (f*g)(n)=\sum_{d|n}d^2\varphi\left(\frac nd \right)\frac{n^2}{d^2}=n^2\sum_{d|n}\varphi\left(\frac nd \right)=n^3=h(n)
 $$
 
-#### min25筛
+### min25筛
 
 给定积性函数$f$，若$f$在质数位置上的取值是一个多项式$P_f(x)$且对于任意质数$p$，$f(p^e)$可以快速求，则可在$O(n^{3/4}/\log n)$的时间复杂度内求出$\displaystyle \sum_{i =1}^nf(i)$。
 
@@ -723,17 +721,17 @@ $$
 
 第二步将合数位置上的取值加回去。
 
-#### min25筛：求$g_k(i,n)$
+#### 第一步：求$g_k(i,n)$
 
 定义：
 
-$Primes$为质数集合，$p_i$为第$i$个质数，$\pi(x)$为$x$以内的质数个数，$m_x$为$x$的最小质因子
+$Primes$为质数集合，$p_i$为第$i$个质数，$\pi(x)$为$x$以内的质数个数，$m_x$为$x$的最小质因子。特别的，$m_1=1$。
 
 $S_f(n)$为$f$的前缀和，即$\displaystyle S_f(n)=\sum_{i =1}^nf(i)$
 
-$S(i,n)$为埃式筛运行过程中筛掉最小质因子属于前$i$个质数的合数（$1$也是合数！）后剩下来的数集
+$S(i,n)$为埃式筛运行过程中筛掉$1$和最小质因子属于前$i$个质数的合数后剩下来的数集
 
-$f(x)$在质数位置取值相同的多项式$\displaystyle P_f(x)=\sum_{k=0}^ma_kx^k$
+$f(x)$在质数位置取值相同的多项式$\displaystyle P_f(x)=\sum_{k=0}^Ka_kx^k$
 
 $g_k(i,n)$为$x^k$在$S(i,n)$处的取值之和，即$\displaystyle g_k(i,n)=\sum_{x \in S(i,n)}x^k$
 
@@ -741,12 +739,12 @@ $g_k(i,n)$为$x^k$在$S(i,n)$处的取值之和，即$\displaystyle g_k(i,n)=\su
 
 则由定义有
 $$
-S(i,n)=[n]-\{x|x \notin Primes \wedge m_x \leq p_i\}=\{x|x\leq n \wedge (x \in Primes \vee m_x>p_i)\}\\
+S(i,n)=[n]-\{x|x \notin Primes \wedge m_x \leq p_i\}=\{x|x\leq n \wedge (x \in Primes \vee m_x>p_i)\}
 $$
-接下来考虑递推$g(i,n)$。初始条件为
-$$
-g_k(0,n)=S_k(n)-1
-$$
+接下来考虑递推$g(i,n)$。
+
+初始条件为除了$1$之外所有$n$以内的正整数之和，即$g_k(0,n)=S_k(n)-1$。
+
 因为大于$\sqrt n$的质数无法筛去$n$以内的任何合数，所以
 $$
 \sum_{x \in Primes \wedge x \leq n}x^k=g_k(\infty,n)=g_k(\pi(\sqrt x),n)
@@ -755,38 +753,41 @@ $$
 
 不难看出要求的即是
 $$
-\sum_{x \in Primes\wedge x \leq n}f(x)=\sum_{x \in Primes\wedge x \leq n}P_f(x)=\sum_{x \in Primes\wedge x \leq n}\sum_{k=0}^ma_kx^k\\=\sum_{i=0}^ma_k\sum_{x \in Primes\wedge x \leq n}x^k=\sum_{k=0}^ma_k g_k(\infty,n)=\sum_{k=0}^ma_k g_k(\pi(\sqrt x),n)
+\sum_{ x \leq n \wedge x \in Primes}f(x)=\sum_{ x \leq n \wedge x \in Primes}P_f(x)=\sum_{ x \leq n \wedge x \in Primes}\sum_{k=0}^Ka_kx^k\\=\sum_{k=0}^Ka_k\sum_{ x \leq n \wedge x \in Primes}x^k=\sum_{k=0}^Ka_k g_k(\infty,n)=\sum_{k=0}^Ka_k g_k(\pi(\sqrt x),n)
 $$
-从$g(i-1,n)$转移到$g(i,n)$过程中筛去的是最小质因子为$p_i$的合数（余下部分的质因子均大于$p_i$）。
+从$g(i-1,n)$转移到$g(i,n)$过程中筛去的是最小质因子为$p_i$的合数（余下部分的质因子均大于等于$p_i$）。
 $$
 S(i,n)=S(i-1,n)-\{x|x \notin Primes \wedge m_x=p_i\}\\
-g_k(i,n)=g_k(i-1,n)-\sum_{x,m_x =p_i}x^k\\
-=g_k(i-1,n)-\sum_{e=1,p_i^e \leq n}p_i^k\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k
+g_k(i,n)=g_k(i-1,n)-\sum_{x\leq n \wedge m_x =p_i}x^k\\
+=g_k(i-1,n)-p_i^k\sum_{x\leq \lfloor n / p_i \rfloor \wedge m_x \geq p_i }x^k
 $$
-注意到满足条件$m_x \geq p_i \wedge x\leq \lfloor n / p_i^e \rfloor$的数集就是$S(i-1,\lfloor n / p_i^e \rfloor)$去掉前$i-1$个质数
-
-定义$x^k$在前$i$个质数位置上的取值之和为$T_k(i)$，即$T_k(i)=\sum_{j=1}^{i}p_j^k$
+注意到
+$$
+\{x|m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor\}=S(i-1,\lfloor n / p_i \rfloor)-\{p_j|j \leq i-1\}
+$$
+定义$x^k$在前$i$个质数位置上的取值之和为$t_k(i)$，即$t_k(i)=\sum_{j=1}^{i}p_j^k$
 
 于是
 $$
-\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k=g_k(i,\lfloor n / p_i \rfloor)-T_k(i)\\
+\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k=g_k(i,\lfloor n / p_i \rfloor)-t_k(i)\\
 $$
 
-带入即可得第一步的递推式
+代入即可得递推式
 $$
-g_k(i,n)=g_k(i-1,n)-p_i^{k}\left[g_k(i,\lfloor n / p_i \rfloor)-T_k(i)\right]
+g_k(i,n)=g_k(i-1,n)-p_i^{k}\left[g_k(i,\lfloor n / p_i \rfloor)-t_k(i)\right]
 $$
 因为有$\lfloor \lfloor a/b\rfloor/c\rfloor=\lfloor a/(bc)\rfloor$，所以只要求出所有$g_k(i,\lfloor n/x \rfloor)$即可。
 
 ```cpp
 namespace sieve {
+
+const int N = 100001, K = 3;
     
 bool ip[N]; ll ps[N], pc;
 void eulerian_sieve();
-
 int sk(int k, int n);	//	从下标1开始的等幂求和
 
-ll n, sq; int r;		//	sq为sqrt(n)，r为sq小于等于sq的质数个数。
+ll n, sq; int r;		//	sq为sqrt(n)，r为小于等于sq的质数个数，即\pi(\sqrt n)
 ll w[N]; int c;			//	w[1...c]为所有n/x的不同取值，从大到小。
 int id1[N], id2[N];		//	如果x>sq，则g_k(i,n)其在w中的位置为id1[x],否则为id2[n/x]
 int t[K][N], g[K][N];	//	每一轮直接在g[K][N]上递推
@@ -807,16 +808,39 @@ void init(ll n_) {
             g[k][c] = sub(sk(k, v % P), 1);
     }
     for (int i = 1; i <= r; ++i) {
-        ll p = ps[i];
-        for (int j = 1; j <= c && p * p <= w[j]; ++j) {
-            for (int k = 0, e = 1; k != K; ++k, e = mul(e, ps[i])) {
-                g[k][j] = sub(g[k][j], mul(e, sub(g[k][id(w[j] / p)], t[k][i - 1])));
+        for (int j = 1, p = ps[i]; 1ll * p * p <= w[j]; ++j) {
+            for (int k = 0, q = 1; k != K; ++k, q = mul(q, ps[i])) {
+                g[k][j] = sub(g[k][j], mul(q, sub(g[k][id(w[j] / p)], t[k][i - 1])));
     }
 }
     
 }
 ```
 
+#### 第二步：求$s(i,n)$
+
+接下来考虑倒过来将前面的步骤反过来。这一步需要快速求$f(p^e)$。
+
+定义$\displaystyle s(i,n)= \sum_{x \in S(i,n)}f(x)=\sum_{x \leq n \wedge m_x>p_i}f(x)$
+
+边界为$\displaystyle s(\pi(\sqrt n),n)=\sum_{k=0}^Ka_k\left(g_k(\pi(\sqrt n),n)-t_k(\pi(\sqrt n))\right)$
+
+最终要求的即是$S_f(n)=1+s(0,n)$。
+
+从$s(i,n)$转移到$s(i-1,n)$需要将最小质因子为$p_i$的数加上。因为$f$不一定像$x^k$一样是完全积性的，所以需要枚举$p_i$在这些合数中的幂次$e$。
+$$
+s(i-1,n)=s(i,n)+\sum_{x\leq n\wedge m_x=p_i}f(x)\\
+=s(i,n)+\sum_{e=1,p_i^e \leq n}\sum _{x\leq \lfloor n/p_i^e\rfloor \wedge m_x>p_i}f(xp_i^e)\\
+=s(i,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)s(i,\lfloor n/p_i^e\rfloor)
+$$
+注意到满足$x\leq \lfloor n/p_i^e\rfloor \wedge m_x>p_i$的数集
+$$
+\{x|m_x > p_i \wedge x\leq \lfloor n / p_i^e \rfloor\}=S(i,\lfloor n / p_i^e \rfloor)-\{p_j|j \leq i \wedge p_j \leq \lfloor n/p_i^e \rfloor \}
+$$
+因此
+$$
+s(i-1,n)=s(i,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)\left[s(i,\lfloor n/p_i^e \rfloor)-\sum_{k=0}^Ka_kt_k(i)\right]
+$$
 
 
 ## 素性测试与因子分解
