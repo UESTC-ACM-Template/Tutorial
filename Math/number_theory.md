@@ -525,8 +525,6 @@ $$
 \sum_{i=1}^{\infty}P[X\geq i]=1+\sum_{i=1}^{\infty}P[X>i]=1+\sum_{i=1}^{\infty}\left(-\frac {1}{m^i}\sum_{n=2}^m\mu(n)\lfloor m/n \rfloor ^i\right)\\=1-\sum_{n=2}^m\mu(n)\sum_{i=1}^{\infty}(\lfloor m/n \rfloor/m)^i=1-\sum_{n=2}^m\mu(n)\frac{\lfloor m/n \rfloor/m}{1-\lfloor m/n \rfloor/m}=1+\sum_{n=2}^m\mu(n)\frac{\lfloor m/n \rfloor}{\lfloor m/n \rfloor-m}
 $$
 
-
-
 ## $\Z/n\Z$的结构
 
 ```mermaid
@@ -562,7 +560,7 @@ stateDiagram
 	I12 --> I6
 ```
 
-$\Z /n \Z$是模$n$意义下的$n$个剩余类与模$n$加法，模$n$乘法组成的代数结构，这个结构完整的刻画了模运算的性质。
+$\Z /n \Z$是模$n$意义下的$n$个剩余类与模$n$加法、模$n$乘法组成的代数结构，这个结构完整的刻画了模运算的性质。
 
 对于模意义下的加法，模$n$意义下的$n$个剩余类构成了一个群$\Z_n$。$\Z_n$同构于循环群$C_n$。
 
@@ -778,45 +776,6 @@ g_k(i,n)=g_k(i-1,n)-p_i^{k}\left[g_k(i,\lfloor n / p_i \rfloor)-t_k(i)\right]
 $$
 因为有$\lfloor \lfloor a/b\rfloor/c\rfloor=\lfloor a/(bc)\rfloor$，所以只要求出所有$g_k(i,\lfloor n/x \rfloor)$即可。
 
-```cpp
-namespace sieve {
-
-const int N = 100001, K = 3;
-    
-bool ip[N]; ll ps[N], pc;
-void eulerian_sieve();
-int sk(int k, int n);	//	从下标1开始的等幂求和
-
-ll n, sq; int r;		//	sq为sqrt(n)，r为小于等于sq的质数个数，即\pi(\sqrt n)
-ll w[N]; int c;			//	w[1...c]为所有n/x的不同取值，从大到小。
-int id1[N], id2[N];		//	如果x>sq，则g_k(i,n)其在w中的位置为id1[x],否则为id2[n/x]
-int t[K][N], g[K][N];	//	每一轮直接在g[K][N]上递推
-
-inline ll id(ll x) { return x <= sq ? id1[x] : id2[n / x]; }
-
-void init(ll n_) {
-    if (!pc) eulerian_sieve();
-    n = n_; sq = sqrt(n_); c = 0;
-    for (r = 1; ps[r] <= sq; ++r);
-    for (int i = 1; i <= r; ++i)
-        for (int k = 0, e = 1; k != K; ++k, e = mul(e, ps[i]))
-            t[k][i] = add(t[k][i - 1], e);
-    for (ll l = 1, r; l <= n; l = r + 1) {
-        ll v = w[++c] = n / l; r = n / v;
-        (v <= sq ? id1[v] : id2[n/v]) = c;
-        for (int k = 0; k != K; ++k)
-            g[k][c] = sub(sk(k, v % P), 1);
-    }
-    for (int i = 1; i <= r; ++i) {
-        for (int j = 1, p = ps[i]; 1ll * p * p <= w[j]; ++j) {
-            for (int k = 0, q = 1; k != K; ++k, q = mul(q, ps[i])) {
-                g[k][j] = sub(g[k][j], mul(q, sub(g[k][id(w[j] / p)], t[k][i - 1])));
-    }
-}
-    
-}
-```
-
 #### 第二步：求$s(i,n)$
 
 接下来考虑倒过来将前面的步骤反过来。这一步需要快速求$f(p^e)$。
@@ -824,6 +783,8 @@ void init(ll n_) {
 定义$\displaystyle s(i,n)= \sum_{x \in S(i,n)}f(x)=\sum_{x \leq n \wedge m_x>p_i}f(x)$
 
 边界为$\displaystyle s(\pi(\sqrt n),n)=\sum_{k=0}^Ka_k\left(g_k(\pi(\sqrt n),n)-t_k(\pi(\sqrt n))\right)$
+
+且若$p_{i+1}>n$，则$m_x \geq p_{i+1}$，所以$s(i,n)=0$。
 
 最终要求的即是$S_f(n)=1+s(0,n)$。
 
@@ -841,6 +802,87 @@ $$
 $$
 s(i-1,n)=s(i,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)\left[s(i,\lfloor n/p_i^e \rfloor)-\sum_{k=0}^Ka_kt_k(i)\right]
 $$
+
+```cpp
+namespace sieve {
+
+const int N = 1000005, K = 2, a[K] = { P - 1, 1 };
+
+int sk(int k, int n) {
+    const int i2 = inv(2), i6 = inv(6);
+    switch(k) {
+        case 0: return n;
+        case 1: return mul(mul(n, n + 1), i2);
+        case 2: return mul(mul(n, n + 1), mul(2 * n + 1, i6));
+    }
+    return 114514;
+}
+
+bool ip[N]; ll ps[N], pc;
+void eulerian_sieve(int n) {
+    fill_n(ip + 1, n, 1); pc = 0; ip[1] = 0;
+    for (int i = 2; i <= n; ++i) {
+        if (ip[i]) ps[++pc] = i;
+        for (int j = 1; j <= pc && i * ps[j] <= n; ++j) {
+            ip[i * ps[j]] = 0;
+            if (i % ps[j] == 0) break;
+        }
+    }
+}
+
+//  sq为sqrt(n)，r为小于等于sq的质数个数，即\pi(\sqrt n)
+//  w[i]为第i大的n/x。w[1]=n, w[c]=1。
+//  如果x>sq，则g_k(i,n)其在w中的位置为id1[x],否则为id2[n/x]
+ll n, sq, w[N]; int c;
+int id1[N], id2[N];
+int t[N][K], g[N][K];
+
+inline int& id(ll x) { return x <= sq ? id1[x] : id2[n / x]; }
+
+void cal_g(ll n_) {
+    n = n_; sq = sqrt(n_); c = 0;
+    for (ll l = 1, r; l <= n; l = r + 1) {
+        ll v = w[++c] = n / l; r = n / v; id(v) = c;
+        for (int k = 0; k != K; ++k)
+            g[c][k] = sub(sk(k, v % P), 1);
+    }
+
+    eulerian_sieve(2 * sq);
+    while (ps[pc] > sq) pc--;
+    for (int i = 1; i <= pc; ++i)
+        for (int k = 0, q = 1; k != K; ++k, q = mul(q, ps[i]))
+            t[i][k] = add(t[i - 1][k], q);
+    for (int i = 1; i <= pc; ++i)
+        for (int j = 1, p = ps[i]; 1ll * p * p <= w[j]; ++j)
+            for (int k = 0, q = 1; k != K; ++k, q = mul(q, ps[i]))
+                g[j][k] = sub(g[j][k], mul(q, sub(g[id(w[j] / p)][k], t[i - 1][k])));
+}
+
+int cal_f(int p, int e, ll q) { return p ^ e; }
+
+int cal_s(int i, ll x) {
+    int p = ps[i + 1], res = 0;
+    if (p > x) return 0;
+    if (!p || 1ll * p * p > x) {
+        for (int k = 0; k != K; ++k)
+            res = add(res, mul(a[k], sub(g[id(x)][k], t[i][k])));
+    }
+    else {
+        ll q = p; res = cal_s(i + 1, x);
+        for (int e = 1; q <= x; ++e, q *= p) 
+            res = add(res, mul(cal_f(p, e, q % P), add(1, cal_s(i + 1, x / q))));
+    }
+    return res;
+}
+
+int cal_sf(ll n) {
+    cal_g(n);
+    return add(cal_s(0, n), 1);
+}
+    
+}
+```
+
 
 
 ## 素性测试与因子分解
