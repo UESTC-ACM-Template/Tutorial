@@ -57,7 +57,7 @@ vector<int> eratosthenes_sieve(int n) {
 
 对于合数$n$来说，其大于$\sqrt n$的质因子至多只有一个，所以只需要检查小于等于$\sqrt n$的所有素数是否能够整除$n$。
 
-$\sqrt n$以内的素数可以预处理，因此运行$T$次$O(n)$级别的质因数分解的时间复杂度a是$O\left(\sqrt {n} \log \log n+T \sqrt {n / \log n}\right)$。
+$\sqrt n$以内的素数可以预处理，因此运行$T$次$O(n)$级别的质因数分解的时间复杂度是$O\left(\sqrt {n} \log \log n+T \sqrt {n / \log n}\right)$。
 
 ```cpp
 vector<int> prime_factorization(int n) {
@@ -204,7 +204,7 @@ x & \equiv & b_n \mod m_n
 \end{cases}
 $$
 
-称为一次同余方程组。
+的方程组被称为一次同余方程组。
 
 命题：一次同余方程组的解是一次同余式。证明略。
 
@@ -761,46 +761,46 @@ g_k(i,n)=g_k(i-1,n)-\sum_{x\leq n \wedge m_x =p_i}x^k\\
 $$
 注意到
 $$
-\{x|m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor\}=S(i-1,\lfloor n / p_i \rfloor)-\{p_j|j \leq i-1\}
+\{x|x\leq \lfloor n / p_i \rfloor \wedge m_x \geq p_i\}=S(i-1,\lfloor n / p_i \rfloor)-\{p_j|j \leq i-1\}=S(i-1,\lfloor n / p_i \rfloor)-S(i - 1,p_i)
 $$
-定义$x^k$在前$i$个质数位置上的取值之和为$t_k(i)$，即$t_k(i)=\sum_{j=1}^{i}p_j^k$
-
 于是
 $$
-\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k=g_k(i,\lfloor n / p_i \rfloor)-t_k(i)\\
+\sum_{x,{m_x \geq p_i \wedge x\leq \lfloor n / p_i \rfloor}}x^k=g_k(i,\lfloor n / p_i \rfloor)-g_k(i,p_i)\\
 $$
 
 代入即可得递推式
 $$
-g_k(i,n)=g_k(i-1,n)-p_i^{k}\left[g_k(i,\lfloor n / p_i \rfloor)-t_k(i)\right]
+g_k(i,n)=g_k(i-1,n)-p_i^{k}\left[g_k(i - 1,\lfloor n / p_i \rfloor)-g_k(i - 1,p_i)\right]
 $$
 因为有$\lfloor \lfloor a/b\rfloor/c\rfloor=\lfloor a/(bc)\rfloor$，所以只要求出所有$g_k(i,\lfloor n/x \rfloor)$即可。
 
+注：因为$i \leq \pi(\sqrt n)$，所以$p_i \leq \sqrt n$，不需要特地求$g_k(i,p_i)$。
+
 #### 第二步：求$s(i,n)$
 
-接下来考虑倒过来将前面的步骤反过来。这一步需要快速求$f(p^e)$。
+这一步的目的是从第$\pi(\sqrt n)$个质数开始依次将$f(x)$在最小质因子为$p_i$的数的位置上的取值加回来。
 
-定义$\displaystyle s(i,n)= \sum_{x \in S(i,n)}f(x)=\sum_{x \leq n \wedge m_x>p_i}f(x)$
+定义$T(i,n)=\{x|x \leq n \wedge m_x \geq p_i\}=S(i-1,n)-\{p|p \in Primes \wedge p <p_{i-1}\}$
 
-边界为$\displaystyle s(\pi(\sqrt n),n)=\sum_{k=0}^Ka_k\left(g_k(\pi(\sqrt n),n)-t_k(\pi(\sqrt n))\right)$
+定义$\displaystyle s(i,n)= \sum_{x \in T(i,n)}f(x)=\sum_{x \leq n \wedge m_x\geq p_i}f(x)$
 
-且若$p_{i+1}>n$，则$m_x \geq p_{i+1}$，所以$s(i,n)=0$。
+边界为$\displaystyle s(\pi(\sqrt n),n)=\sum_{k=0}^Ka_k\left(g_k(\pi(\sqrt n),n)-g_k(\pi(\sqrt n),\sqrt n\right)$
 
 最终要求的即是$S_f(n)=1+s(0,n)$。
 
-从$s(i,n)$转移到$s(i-1,n)$需要将最小质因子为$p_i$的数加上。因为$f$不一定像$x^k$一样是完全积性的，所以需要枚举$p_i$在这些合数中的幂次$e$。
+从$s(i,n)$转移到$s(i-1,n)$需要将最小质因子为$p_i$的数加上。因为$f$不一定像$x^k$一样是完全积性的，所以需要枚举$p_i$在这些合数中的幂次$e$。这一步需要快速求$f(p^e)$。
 $$
-s(i-1,n)=s(i,n)+\sum_{x\leq n\wedge m_x=p_i}f(x)\\
-=s(i,n)+\sum_{e=1,p_i^e \leq n}\sum _{x\leq \lfloor n/p_i^e\rfloor \wedge m_x>p_i}f(xp_i^e)\\
-=s(i,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)s(i,\lfloor n/p_i^e\rfloor)
+s(i,n)=s(i+1,n)+\sum_{x\leq n\wedge m_x=p_i}f(x)\\
+=s(i+1,n)+\sum_{e=1,p_i^e \leq n}\left(f(p_i^e)+\sum _{x\leq \lfloor n/p_i^e\rfloor \wedge m_x>p_i}f(xp_i^e)\right)\\
+=s(i+1,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)\left(1+\sum _{x\leq \lfloor n/p_i^e\rfloor \wedge m_x>p_i}f(x)\right)
 $$
 注意到满足$x\leq \lfloor n/p_i^e\rfloor \wedge m_x>p_i$的数集
 $$
-\{x|m_x > p_i \wedge x\leq \lfloor n / p_i^e \rfloor\}=S(i,\lfloor n / p_i^e \rfloor)-\{p_j|j \leq i \wedge p_j \leq \lfloor n/p_i^e \rfloor \}
+\{x|x\leq \lfloor n / p_i^e \rfloor \wedge m_x > p_i\}=\{x|x\leq \lfloor n / p_i^e \rfloor \wedge m_x \geq p_{i+1}\}=T(i+1,\lfloor n / p_i^e \rfloor)
 $$
 因此
 $$
-s(i-1,n)=s(i,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)\left[s(i,\lfloor n/p_i^e \rfloor)-\sum_{k=0}^Ka_kt_k(i)\right]
+s(i,n)=s(i+1,n)+\sum_{e=1,p_i^e \leq n}f(p_i^e)(1+s(i+1,\lfloor n/p_i^e\rfloor))
 $$
 
 ```cpp
@@ -808,17 +808,12 @@ namespace sieve {
 
 const int N = 1000005, K = 2, a[K] = { P - 1, 1 };
 
-int sk(int k, int n) {
-    const int i2 = inv(2), i6 = inv(6);
-    switch(k) {
-        case 0: return n;
-        case 1: return mul(mul(n, n + 1), i2);
-        case 2: return mul(mul(n, n + 1), mul(2 * n + 1, i6));
-    }
-    return 114514;
-}
+int s0(int n) { return n; }
+int s1(int n) { return mul(mul(n, n + 1), i2); }
+int s2(int n) { return mul(mul(n, n + 1), mul(2 * n + 1, i6)); }
+int (*sk[3])(int n) = { s0, s1, s2 };
 
-bool ip[N]; ll ps[N], pc;
+bool ip[N]; int ps[N], pc;
 void eulerian_sieve(int n) {
     fill_n(ip + 1, n, 1); pc = 0; ip[1] = 0;
     for (int i = 2; i <= n; ++i) {
@@ -834,50 +829,46 @@ void eulerian_sieve(int n) {
 //  w[i]为第i大的n/x。w[1]=n, w[c]=1。
 //  如果x>sq，则g_k(i,n)其在w中的位置为id1[x],否则为id2[n/x]
 ll n, sq, w[N]; int c;
-int id1[N], id2[N];
-int t[N][K], g[N][K];
+int id1[N], id2[N], g[K][N];
 
 inline int& id(ll x) { return x <= sq ? id1[x] : id2[n / x]; }
+inline int cal_f(int p, int e, ll q) { return p ^ e; }
 
 void cal_g(ll n_) {
     n = n_; sq = sqrt(n_); c = 0;
     for (ll l = 1, r; l <= n; l = r + 1) {
         ll v = w[++c] = n / l; r = n / v; id(v) = c;
         for (int k = 0; k != K; ++k)
-            g[c][k] = sub(sk(k, v % P), 1);
+            g[k][c] = sub(sk[k](v % P), 1);
     }
-
     eulerian_sieve(2 * sq);
     while (ps[pc] > sq) pc--;
     for (int i = 1; i <= pc; ++i)
-        for (int k = 0, q = 1; k != K; ++k, q = mul(q, ps[i]))
-            t[i][k] = add(t[i - 1][k], q);
-    for (int i = 1; i <= pc; ++i)
         for (int j = 1, p = ps[i]; 1ll * p * p <= w[j]; ++j)
-            for (int k = 0, q = 1; k != K; ++k, q = mul(q, ps[i]))
-                g[j][k] = sub(g[j][k], mul(q, sub(g[id(w[j] / p)][k], t[i - 1][k])));
+            for (int k = 0, q = 1; k != K; ++k, q = mul(q, p))
+                g[k][j] = sub(g[k][j], mul(q, sub(g[k][id(w[j] / p)], g[k][id(ps[i - 1])])));
 }
 
-int cal_f(int p, int e, ll q) { return p ^ e; }
-
 int cal_s(int i, ll x) {
-    int p = ps[i + 1], res = 0;
-    if (p > x) return 0;
-    if (!p || 1ll * p * p > x) {
+    int p = ps[i], res = 0;
+    if (x <= 1 || p > x) return 0;
+    if (1ll * p * p > x) {
         for (int k = 0; k != K; ++k)
-            res = add(res, mul(a[k], sub(g[id(x)][k], t[i][k])));
+            res = add(res, mul(a[k], sub(g[k][id(x)], g[k][id(ps[i - 1])])));
+        if (p == 2) res = add(res, 2);
     }
     else {
-        ll q = p; res = cal_s(i + 1, x);
-        for (int e = 1; q <= x; ++e, q *= p) 
-            res = add(res, mul(cal_f(p, e, q % P), add(1, cal_s(i + 1, x / q))));
+        res = cal_s(i + 1, x);
+        ll q = p;
+        for (int e = 1; q <= x; e++, q *= p)
+            res = add(res, mul(cal_f(p, e, q), add(1, cal_s(i + 1, x / q))));
     }
     return res;
 }
 
 int cal_sf(ll n) {
     cal_g(n);
-    return add(cal_s(0, n), 1);
+    return add(cal_s(1, n), 1);
 }
     
 }
