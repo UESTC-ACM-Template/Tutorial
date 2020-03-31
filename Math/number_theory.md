@@ -674,8 +674,8 @@ namespace sieve {
 
 const int N = 1000001;
 int sf[N];				//	f的前缀和，用欧拉筛取得
-ll sg(ll n);			//	计算g的前缀和
-ll sh(ll n);			//	计算h的前缀和
+int sg(int n);			//	计算g的前缀和
+int sh(int n);			//	计算h的前缀和
 void eulerian_sieve();	//	...
     
 int m[N]; ll n;
