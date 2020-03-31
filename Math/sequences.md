@@ -5,11 +5,9 @@ $$
 \def\stirlings#1#2{\genfrac{\{}{\}}{0pt}{0}{#1}{#2}}
 $$
 
-
-
 ## 计数序列
 
-### 等比数列
+### 等比数列与求和
 
 $$
 S_0(n)=\sum_{i=0}^nq^i=\frac{q^{n+1}-1}{q-1}\\
@@ -65,7 +63,7 @@ $$
 
 $$
 \binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}\\
-\binom{n}{k}=\frac{n}{k}\binom{n-1}{k-1}\\
+\binom{n}{k}=\frac{n}{k}\binom{n-1}{k-1}=\frac{n-k+1}{k}\binom {n}{k-1}\\
 \sum_{k=0}^n{\binom{m+k}{k}}=\binom{m+n+1}{n}\\
 \sum_{k=0}^n{\binom{k}{m}}=\binom{n+1}{m+1}\\
 \sum_{k=0}^{n}{\binom{m_1}{k}\binom{m_2}{n-k}}=\binom{m_1+m_2}{n}
