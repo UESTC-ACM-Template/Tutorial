@@ -80,7 +80,7 @@ $$
 
 给定一阶可微的函数$f : \mathbb{R} ^n \rightarrow \mathbb{R}$，若$\bs x_0$使得$f$取得极值，则必有$\nabla f(\bs x_0)=0$。
 
-
+注：这个应该每本高数书都证过了。
 
 给定一阶可微的函数$f : \mathbb{R} ^n \rightarrow \mathbb{R}$和约束函数$\boldsymbol g : \mathbb{R}^n\rightarrow\mathbb{R}^{k},\boldsymbol h : \mathbb{R}^n\rightarrow\mathbb{R}^{m}$，对于带约束优化问题
 $$
@@ -91,21 +91,17 @@ s.t.& &\boldsymbol h(\boldsymbol x) = 0\\
 \end{array}
 $$
 
-可以构造一个奥妙重重的函数来把约束塞进目标函数里，即转化为无约束问题。
+接下来寻找极值点满足的必要条件。（类似前面的梯度为0）
 
 定义（可行域）：对于上述优化问题，定义其可行域为
 $$
 D=\{ x \in \R^n|\bs h(\bs x) =\bs 0 \wedge \bs g(\bs x) \leq \bs 0\}
 $$
-例：这里可以想象$\R^3$中有一个球形约束$g(\bs x)=||x||^2-r \leq0$，和一个平面约束$h(\bs x)=\bs w^T\bs x-\bs b=0$ 。这两个约束的交（即可行域）是一个圆盘。
-
-
+例：这里可以想象$\R^3$中有一个球形约束$g(\bs x)=||\bs x||^2-r \leq0$，和一个平面约束$h(\bs x)=\bs w^T\bs x-\bs b=0$ 。这两个约束的交（即可行域）是一个圆盘。
 
 接下来寻找在可行域内的极值点的类似无约束情况下梯度等于$0$的特殊性质。
 
 注意到任意一个满足约束的极小值点$\bs x_0$附近，朝着可行域内的任意一个方向走都不能让$f$减小（否则就不是极小点了）。
-
-将不等式约束分为两类，一类满足$g_i(\bs x_0)=0$而另一类满足$g_i(\bs x_0)<0$。
 
 考虑每种约束对可行域中方向的约束：
 
@@ -136,7 +132,7 @@ $$
 $$
 最终形态如下（Karush–Kuhn–Tucker条件）：
 
-给定$f,\bs g, \bs h$，$f$在可行域中的极值点满足存在$\bs \lambda \in \R^m, \bs \mu \in \bs R^k$使得
+给定$f,\bs g, \bs h$，$f$在可行域中的极值点满足存在$\bs \lambda \in \R^m, \bs \mu \in \R^k$使得
 $$
 \nabla f(\bs x)+\bs \lambda^T\nabla \bs h(\bs x)+\bs \mu^T\bs g(\bs x)=\bs 0\\
 \bs h(\bs x)=\bs 0\\
@@ -152,13 +148,11 @@ $$
 $$
 里面的$\bs \lambda$和$\bs \mu$被称为拉格朗日乘子（后者为KKT乘子）。
 
-注意到第一个式子等价于
+注意到KKT条件的第一个式子等价于
 $$
 \par{\mathscr L}{\bs x}\bigg|_{\bs x=\bs x_0}=0
 $$
-
-
-现在已经证明拉格朗日函数的梯度能给出和前面一样的必要条件，接下来就可以利用拉格朗日函数构造一个对应原问题的无约束优化问题了。
+接下来利用拉格朗日函数构造一个与原问题同解的无约束优化问题。
 
 设
 $$
@@ -170,7 +164,7 @@ $$
 $$
 注：$D$为可行域。
 
-证明：对于不在可行域中的任意一个点$\bs x$，存在一个$h_i$或$g_i$使得$h_i(\bs x) \neq 0$或$g_i(\bs x) \geq 0$，因而改变对应的乘子分量即可使$\mathscr L$增大，且没有上限。所以$\theta_{primal}$在可行域外的取值是正无穷，因而其最小值等于$f$在可行域中的最小值。
+证明：对于不在可行域中的任意一个点$\bs x$，存在一个$h_i$或$g_i$使得$h_i(\bs x) \neq 0$或$g_i(\bs x) > 0$，因而改变对应的乘子分量即可使$\mathscr L$增大，且没有上限。而对于未取等号的不等式约束$g_i(\bs x)<0$，为使$\theta_{primal}$尽可能大，其对应的乘子必定是$0$。因而自动满足$\bs \mu^T\bs g=0$。所以$\theta_{primal}$在可行域外的取值是正无穷，且在可行域内自动满足$\bs \mu^T\bs g=0$，因而其最小值等于$f$在可行域中的最小值。
 
 观察到交换$\min$和$\max$的顺序不会改变答案，所以定义
 $$
@@ -244,6 +238,16 @@ $$
 $$
 \max_{\bs \mu \geq 0} \mathscr L=\max_{\bs \mu \geq 0}\sum_{i=1}^m\mu_i-\frac 12 \sum_{i=1}^m\sum_{j=1}^m\mu_i\mu_jy_iy_j\bs x_i^T\bs x_j
 $$
+
+本节在不同程度上参考了
+
+[1] https://www.zhihu.com/question/23311674/answer/235256926
+
+[2]https://www.cnblogs.com/90zeng/p/Lagrange_duality.html
+
+[3]西瓜书
+
+[4]一万个维基百科页面
 
 ## 线性规划
 
