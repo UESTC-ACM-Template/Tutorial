@@ -1,6 +1,6 @@
 # 最优化
 
-$\def\brac#1{\left(#1\right)}$前半部分为连续优化，后半部分为离散优化。
+$\def\brac#1{\left(#1\right)}\def\mat#1{\left[\begin{array}{cl}#1\end{array}\right]}$前半部分为连续优化，后半部分为离散优化。
 
 ## 向量微积分
 
@@ -12,14 +12,13 @@ $$
 $$
 定义（矩阵对标量求导）：
 $$
-\par{\bs A}{k}=\left[
-\begin{array}{cl}
+\par{\bs A}{k}=
+\mat{
 \par{a_{11}}k & \par{a_{12}}k & \cdots & \par{a_{1m}}k\\
 \par{a_{21}}k & \par{a_{22}}k & \cdots & \par{a_{2m}}k\\
 \vdots & \vdots & \ddots & \vdots\\
 \par{a_{n1}}k & \par{a_{n2}}k & \cdots & \par{a_{1m}}k\\
-\end{array}
-\right]
+}
 $$
 定义（标量对向量求导）：
 $$
@@ -38,23 +37,19 @@ $$
 
 定义（向量对向量求导）：
 $$
-\par {\bs y}{\bs x}=\left[
-\begin{array}{cl}
+\par {\bs y}{\bs x}=\mat{
 \par{y_1}{x_1} & \par{y_2}{x_1} & \cdots & \par{y_m}{x_1}\\
 \par{y_1}{x_2} & \par{y_2}{x_2} & \cdots & \par{y_m}{x_2}\\
 \vdots & \vdots & \ddots & \vdots\\
 \par{y_1}{x_n} & \par{y_2}{x_n} & \cdots & \par{y_m}{x_n}\\
-\end{array}
-\right]
+}
 $$
-例：$\displaystyle \par{\bs A^T\bs x}{\bs x}=\left[
-\begin{array}{cl}
+例：$\displaystyle \par{\bs A^T\bs x}{\bs x}=\mat{
 \par{}{x_1}\sum_{k=1}^na_{k1}x_k & \par{}{x_1}\sum_{k=1}^na_{k2}x_k & \cdots & \par{}{x_1}\sum_{k=1}^na_{km}x_k\\
 \par{}{x_2}\sum_{k=1}^na_{k1}x_k & \par{}{x_2}\sum_{k=1}^na_{k2}x_k & \cdots & \par{}{x_2}\sum_{k=1}^na_{km}x_k\\
 \vdots & \vdots & \ddots & \vdots\\
 \par{}{x_n}\sum_{k=1}^na_{k1}x_k & \par{}{x_n}\sum_{k=1}^na_{k2}x_k & \cdots & \par{}{x_n}\sum_{k=1}^na_{km}x_k\\
-\end{array}
-\right]=\bs A$
+}=\bs A$
 
 当自变量确定时（如为$\bs x$），一般将$\displaystyle \par {f}{\bs x}, \par{\bs g}{\bs x}$记作$\nabla f, \nabla \bs g$。即$f,\bs g$的梯度。
 
@@ -82,7 +77,9 @@ $$
 
 注：这个应该每本高数书都证过了。
 
-给定一阶可微的函数$f : \mathbb{R} ^n \rightarrow \mathbb{R}$和约束函数$\boldsymbol g : \mathbb{R}^n\rightarrow\mathbb{R}^{k},\boldsymbol h : \mathbb{R}^n\rightarrow\mathbb{R}^{m}$，对于带约束优化问题
+这是极值点的必要条件，也意味着可以通过寻找必要条件来缩小极值点的范围，进而寻找最值点。
+
+给定一阶可微的函数$f : \mathbb{R} ^n \rightarrow \mathbb{R}$和一阶可微的约束函数$\boldsymbol g : \mathbb{R}^n\rightarrow\mathbb{R}^{k},\boldsymbol h : \mathbb{R}^n\rightarrow\mathbb{R}^{m}$，对于带约束优化问题
 $$
 \begin{array}{lcl}
 \min & &f(\boldsymbol x)\\
@@ -156,8 +153,10 @@ $$
 
 设
 $$
-\displaystyle \theta_{primal}(\bs x)=\max_{\lambda,\mu \geq 0} \mathscr L(\bs x, \bs \lambda, \bs \mu)
+\displaystyle \theta_{primal}(\bs x)=\max_{\bs \lambda,\bs \mu \geq 0} \mathscr L(\bs x, \bs \lambda, \bs \mu)
 $$
+注：$\bs \lambda , \bs \mu \geq 0$不是$\bs \lambda \geq 0 \wedge \bs \mu \geq 0$。
+
 则
 $$
 \min_{\bs x}\theta_{primal}(\bs x)=\min_{\bs x\in D}f(\bs x)
@@ -166,14 +165,22 @@ $$
 
 证明：对于不在可行域中的任意一个点$\bs x$，存在一个$h_i$或$g_i$使得$h_i(\bs x) \neq 0$或$g_i(\bs x) > 0$，因而改变对应的乘子分量即可使$\mathscr L$增大，且没有上限。而对于未取等号的不等式约束$g_i(\bs x)<0$，为使$\theta_{primal}$尽可能大，其对应的乘子必定是$0$。因而自动满足$\bs \mu^T\bs g=0$。所以$\theta_{primal}$在可行域外的取值是正无穷，且在可行域内自动满足$\bs \mu^T\bs g=0$，因而其最小值等于$f$在可行域中的最小值。
 
-观察到交换$\min$和$\max$的顺序不会改变答案，所以定义
+定义（对偶问题）
 $$
 \theta_{dual}(\bs \lambda, \bs \mu)=\min_{\bs x} \mathscr L(\bs x, \bs \lambda, \bs \mu)
 $$
-有对偶问题
+有弱对偶定理
 $$
-\max_{\bs \lambda, \bs \mu \geq 0} \theta_{dual}(\bs \lambda, \bs \mu)=\min_{\bs x}\theta_{primal}(\bs x)=\min_{\bs x\in D}f(\bs x)
+\theta_{dual}(\bs \lambda, \bs \mu)=\min_{\bs x} \mathscr L(\bs x, \bs \lambda, \bs \mu) \leq \mathscr L(\bs x, \bs \lambda, \bs \mu) \leq \max_{\bs \lambda, \bs \mu \geq 0} \mathscr L(\bs x, \bs \lambda, \bs \mu) =\theta_{primal}(\bs x)
 $$
+因而有$\displaystyle \max_{\bs \lambda, \bs \mu \geq 0}\theta_{dual}(\bs \lambda, \bs \mu)\leq \min_{\bs x}\theta_{primal}(\bs x)$
+
+定理（Slater条件）：当$\bs h(\bs x)=0$是仿射约束且$f$和$g_i$都是凸的，则有强对偶性
+$$
+\displaystyle \max_{\bs \lambda, \bs \mu \geq 0}\theta_{dual}(\bs \lambda, \bs \mu)= \min_{\bs x}\theta_{primal}(\bs x)
+$$
+证明略。
+
 对偶问题有时候会比原问题好解。
 
 例：支持向量机(SVM)是一个解决二分类问题的模型。其基本思想是使用一个超平面将两类数据点分开。
@@ -230,7 +237,7 @@ $$
 =\sum_{i=1}^m\mu_i-\frac 12 \sum_{i=1}^m\sum_{j=1}^m\mu_i\mu_jy_iy_j\bs x_i^T\bs x_j
 $$
 
-由拉格朗日对偶可以丢掉不等式约束，原问题答案为
+由拉格朗日对偶和Slater条件,这里可以丢掉不等式约束。原问题答案为
 $$
 \min _{\bs w} \max_{\bs \mu \geq 0} \mathscr L
 $$
@@ -238,6 +245,10 @@ $$
 $$
 \max_{\bs \mu \geq 0} \mathscr L=\max_{\bs \mu \geq 0}\sum_{i=1}^m\mu_i-\frac 12 \sum_{i=1}^m\sum_{j=1}^m\mu_i\mu_jy_iy_j\bs x_i^T\bs x_j
 $$
+
+这个问题属于半正定规划，比原问题更好求解，且有比半正定规划求解器更好的算法（SMO等）。
+
+
 
 本节在不同程度上参考了
 
@@ -251,30 +262,142 @@ $$
 
 ## 线性规划
 
-这一段中不会（且没有必要）再用粗体区分向量和标量（且我懒）
+这一段中不会（且没有必要）再用粗体区分向量和标量
 
 定义（标准形式的线性规划）：给定代价$c \in \R^{n \times 1}$，约束矩阵$A \in \R ^{m \times n}$和向量$b \in \R^{n \times 1}$，求解
 $$
 \max_{x \geq 0} c^T x\\
 s.t. Ax \leq b
 $$
-定义（一堆解）：
-
-满足$x \geq 0$和$Ax \leq b$的$x$被称为可行解。
-
-
-
-### 单纯形法
-
-
 
 ### 对偶
 
-## 最短路
+考虑标准型线性规划
+$$
+\max_{x \geq 0} c^T x\\
+s.t. Ax \leq b
+$$
+构造拉格朗日函数
+$$
+\mathscr L(x, y, \mu)=-c^Tx+y^T(Ax-b)-\mu^Tx
+$$
+由KKT条件有
+$$
+\par{\mathscr L}{x}=-c+A^Ty-\mu=0\\
+$$
+同时因为$\mu \geq 0$，所以
+$$
+A^Ty-c=\mu\geq 0
+$$
+代回得
+$$
+\mathscr L(x,y,\mu)=(-c+y^TA-\mu)^Tx-y^Tb=-y^Tb
+$$
+其拉格朗日对偶问题为
+$$
+\max_{y \geq 0, \mu \geq 0} \min_{x\geq 0}-y^Tb=\min_{y \geq 0}b^Ty\\
+s.t. A^Ty \geq c
+$$
+由Slater条件得这两个问题的解相等。
 
-## 最大流
+考虑一般型线性规划
+$$
+\max_{x \geq 0} c^T x\\s.t. Ax =b
+$$
+构造其拉格朗日函数：
+$$
+\mathscr L(x,y,\mu)=-c^Tx+y^T(Ax-b)+\mu^Tx
+$$
+和前面一样，只是$y$没有大于等于$0$的约束。
 
-## 费用流
+最后得到的对偶问题是
+$$
+\min_y b^Ty\\
+s.t. A^Ty \geq c
+$$
+
+|          |                            标准型                            |                            一般型                            |
+| :------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+|  原问题  | $\begin{gather}\displaystyle\min_{x \geq 0} c^T x \\ s.t. Ax \leq b\end{gather}$ | $\begin{gather}\displaystyle\min_{x \geq 0} c^T x \\ s.t. Ax = b\end{gather}$ |
+| 对偶问题 | $\begin{gather}\displaystyle\min_{y \geq 0} b^T y \\ s.t. A^Ty \geq c\end{gather}$ | $\begin{gather}\displaystyle\min_{y} b^T y \\ s.t. A^Ty \geq c\end{gather}$ |
+
+定理（互补松弛定理）：咕了，好像长这样
+$$
+y^T(Ax-b)=x^T(A^Ty-c)=0
+$$
+
+### 单纯形法
+
+先考虑标准型线性规划，即约束是不等式的情况。
+
+考虑$\R^3$中的线性规划问题，若每个约束都是一个半空间，则最终的可行域将是一堆超平面和三个坐标轴平面围成的凸包。
+
+观察到代价函数在这个凸包上某个顶点一定能取到最优值，一个最朴素的想法即是枚举这个凸包的每个顶点。
+
+但因为代价函数由非常好的性质（线性），所以可以考虑从某个顶点，如原点开始贪心地往旁边代价更低的顶点转移，这样可以避免枚举每个顶点，但复杂度很玄学（仍然是指数级的，但是跑的很快）。
+
+若周围的顶点代价均大于等于当前点，那么算法终止。
+
+接下来考虑如何表示这个凸包的顶点。
+
+凸包的顶点一定是许多超平面的交。
+
+点$x$在某个超平面上代表着该超平面对应的不等式约束取到了等号。
+
+在$\R^3$中，三个超平面的交即可确定一个点（不考虑退化情况），同理在$\R^n$中$n$个超平面的交即可确定一个点。
+
+考虑将标准型表示成特殊的一般型：即将$A$的列重排可获得一个单位矩阵的一般型。
+
+对于该凸包的一个顶点，其经过的超平面数量必定大于等于$n$。
+
+用$m+n$个约束中的$n$个超平面来表示顶点。（除了$A$中的$m$行外还有$n$个$x_i\geq 0$）
+
+当点位于这$n$个超平面的交时，对应的约束方程取到等号。
+
+对于不等式约束，可以通过将等式左右的差定义为一个松弛变量来将不等式约束转化为等式约束。松弛变量取值为$0$即表示原来的不等式约束取到了等号。
+
+引入松弛变量$x'$，原来的不等式约束$Ax \leq b$即转化为$Ax+Ix'=b$。
+
+对于$b\geq 0$的标准型，初始解即可设为$x=0$。此时$x'=b$。其他不等式约束对应的松弛变量值即被唯一确定。
+
+记$X=\mat{x'\\x}$，其分量记为$x_i,1 \leq i \leq m+n$。对于线性规划问题
+$$
+\max_{X \geq 0} \mat{0 & c^T}X\\
+s.t.\mat{I & A}X=b
+$$
+记矩阵
+$$
+\mat{0 & 0 & c^T\\b & I & A}
+$$
+为该线性规划的初始单纯形表。左上角的$0$即当前所在点的目标函数值。
+
+单纯形表中除了最左边的那一列之外的每一列都对应着$X$的一个分量。
+
+取$0$的变量被称为非基变量，其余的被称为基变量。
+
+在任意时刻，基变量有$m$个，非基变量有$n$个。基变量的值等于单纯形表左侧第一列除第一行外的值。
+
+初始的基变量即为原问题中属于$Ax \leq b$的松弛变量。
+
+不考虑具体的原来的$m$个半空间约束，对于当前的$m$个等式约束，因为有$m<m+n$，所以当前的等式约束确定的解集有$m+n-m=n$个自由度。
+
+所以将任意$n$个变量置$0$即可解出余下的$m$个变量的值。
+
+这$n$个变量代表了这$m+n$个超平面中的$n$个。而这$n$个超平面的交即是当前点。
+
+单纯形表维护了$m+1$个等式。初始状态如下：
+$$
+\mat{0 & c^T\\I & A}\mat{b\\0}=\mat{0\\b}
+$$
+单纯形法通过对单纯形表进行初等行变换来将当前点移动到相邻的顶点。同时维护移动的代价对目标函数值的影响。
+
+设而移动前变量$x_e=0$是非基变量（对应的约束取到等号，即在该约束的超平面上），变量$x_l>0$（对应约束未取到等号，即不在该约束的超平面上）。
+
+移动后变量$x_e>0$，且变量$x_l = 0$；此时称$x_e$为入基变量，$x_l$为出基变量。
+
+（咕了）
+
+
 
 ## 拟阵
 
