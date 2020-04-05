@@ -1,38 +1,44 @@
+$$
+\def\brac#1{\left(#1\right)}\def\mat#1{\left[\begin{array}{cl}#1\end{array}\right]}
+$$
+
+
+
 # 线性递推
 
 定义：数列$\{a_i\}$为线性递推数列当且仅当存在$k$与数列$c_1, c_2, \cdots, c_k$使得
 
-$$\forall i \geq k,a_i=\sum_{j=1}^kc_ja_{i-j}$$
+
+$$
+\forall i \geq k,a_i=\sum_{j=1}^kc_ja_{i-j}
+$$
 
 给定$a_0,a_1,...,a_{k-1}$，求$a_n$。
 
-直接模拟的复杂度是$O(kn)$，一般来说不可接受。
+直接模拟的复杂度是$O(kn)$，一般不可接受。
 
 ## 矩阵快速幂
 
 构造矩阵$C$与向量$\vec x_i$如下
 
 $$
-C=\left[
-\begin{array}{lcl}
+C=
+\mat{
     c_1 & c_2 & c_3 & \cdots & c_{k-1} & c_k\\
     1 & 0 & 0 & \cdots & 0 & 0\\
     0 & 1 & 0 & \cdots & 0 & 0\\
     \vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
     0 & 0 & 0 & \cdots & 0 & 0\\
     0 & 0 & 0 & \cdots & 1 & 0
-\end{array}
-\right]
+}
 ,
-\vec x_i = \left[
-\begin{array}{cl}
+\vec x_i = \mat{
     a_{i+k-1}\\
     a_{i+k-2}\\
     \vdots\\
     a_{i+1}\\
     a_{i}
-\end{array}
-\right]
+}
 $$
 
 易得$\vec x_i=C\vec x_{i-1}=C^i\vec x_0$。
@@ -103,43 +109,65 @@ int linear_recursion(int n, const vi& a, const vi& c) {
 
 考虑到若$C$存在特征值分解$C=P\Lambda P^{-1}$，可在$O(k^3+k \log n)$的复杂度内求出$a_n$。
 
-设$\lambda$为$C$的某个特征值，发现对于$\vec x=(\lambda ^{n-1}, \lambda ^{n-2}, \cdots, \lambda, 1)^T$有
+设$\lambda$为$C$的某个特征值，发现对于$\vec x=\mat{\lambda ^{n-1}, \lambda ^{n-2}, \cdots, \lambda, 1}^T$有
 
 $$
 C\vec x=
-\left[
-\begin{array}{lcl}
+\mat{
     c_1 & c_2 & c_3 & \cdots & c_{k-1} & c_k\\
     1 & 0 & 0 & \cdots & 0 & 0\\
     0 & 1 & 0 & \cdots & 0 & 0\\
     \vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
     0 & 0 & 0 & \cdots & 0 & 0\\
     0 & 0 & 0 & \cdots & 1 & 0
-\end{array}
-\right]
-\left[
-\begin{array}{cl}
+}
+\mat{
     \lambda ^{n-1}\\
     \lambda ^{n-2}\\
     \lambda ^{n-3}\\
     \vdots \\
     \lambda\\
     1
-\end{array}
-\right]=
-\left[
-\begin{array}{cl}
+}
+=
+\mat{
     \lambda ^{n}\\
     \lambda ^{n-1}\\
     \lambda ^{n-2}\\
     \vdots \\
     \lambda^{2}\\
     \lambda^{1}
-\end{array}
-\right]=\lambda \vec x
+}
+=\lambda \vec x
 $$
 
-当$C$的特征多项式有$n$个不同的根时，$a_n$可以通过特征值分解写成$n$个带系数的指数函数的和。
+设$\vec x_i=\mat{\lambda_i ^{n-1}, \lambda_i ^{n-2}, \cdots, \lambda_i, 1}^T$，则由前式有$C \vec x_i=\lambda_i \vec x_i$。
+
+令$P=\mat{\vec x_1,\vec x_2, \cdots, \vec x_n}, \Lambda=diag(\lambda_1, \lambda_2, \cdots, \lambda_n)$，则有$CP=P\Lambda$，即$C=P \Lambda P^{-1}$。
+
+注：当$C$的特征多项式有$n$个不同的根时，$a_n$可以通过特征值分解写成$n$个带系数的指数函数的和。在其他某些情况下会退化成多项式。
+
+## 生成函数
+
+设$\displaystyle F(x)=\sum_{i=0}^\infty a_ix^i$，则有
+$$
+F(x)=\sum_{i=0}^\infty a_ix^i=\sum_{i=0}^{k-1}a_ix_i+\sum_{i=k}^\infty\brac{\sum_{j=1}^kc_{j}a_{i-j}}x^i\\
+=\sum_{i=0}^{k-1}a_ix_i+\sum_{j=1}^kc_jx^j\sum_{i=k}^\infty a_{i-j}x^{i-j}=\sum_{i=0}^{k-1}a_ix_i+\sum_{j=1}^kc_jx^j\sum_{i=k-j}^\infty a_{i}x^{i}\\
+=\sum_{i=0}^{k-1}a_ix_i+\sum_{j=1}^kc_jx^j\brac{F(x)-\sum_{i=0}^{k-j-1}a_ix^i}\\
+=\brac{\sum_{j=1}^kc_jx^j}F(x)+\sum_{i=0}^{k-1}a_ix^i-\sum_{j=1}^{k-1}\sum_{i=0}^{k-j-1}c_ja_ix^{i+j}\\
+=\brac{\sum_{j=1}^kc_jx^j}F(x)+\sum_{i=0}^{k-1}a_ix^i-\sum_{j=1}^{k-1}\sum_{i=j}^{k-1}c_ja_{i-j}x^{i}\\
+=\brac{\sum_{j=1}^kc_jx^j}F(x)+\sum_{i=0}^{k-1}\brac{a_i-\sum_{j=1}^{i}c_ja_{i-j}}x^{i}\\
+$$
+于是
+$$
+F(x)=\frac{\displaystyle \sum_{i=0}^{k-1}\brac{a_i-\sum_{j=1}^{i}c_ja_{i-j}}x^{i}}{\displaystyle 1-\sum_{j=1}^kc_jx^j}
+$$
+令$c_0=-1$即可获得很漂亮的形式
+$$
+F(x)=\frac{\displaystyle \sum_{i=0}^{k-1}\brac{-\sum_{j=0}^{i}c_ja_{i-j}}x^{i}}{\displaystyle -\sum_{j=0}^kc_jx^j}
+=\frac{\displaystyle \sum_{i=0}^{k-1}\sum_{j=0}^{i}c_ja_{i-j}x^{i}}{\displaystyle\sum_{j=0}^kc_jx^j}
+$$
+
 
 ## 最短线性递推式(Berlekamp-Massey)
 
