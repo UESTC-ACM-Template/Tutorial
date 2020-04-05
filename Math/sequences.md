@@ -3,6 +3,7 @@ $$
 \def\floor#1{\left\lfloor #1 \right\rfloor}
 \def\stirlingf#1#2{\genfrac{[}{]}{0pt}{0}{#1}{#2}}
 \def\stirlings#1#2{\genfrac{\{}{\}}{0pt}{0}{#1}{#2}}
+\def\brac#1{\left(#1\right)}\def\mat#1{\left[\begin{array}{cl}#1\end{array}\right]}
 $$
 
 ## 计数序列
@@ -13,7 +14,7 @@ $$
 S_0(n)=\sum_{i=0}^nq^i=\frac{q^{n+1}-1}{q-1}\\
 S_k(n)=\sum_{i=0}^ni^kq^i=\frac{1}{q-1}\brac{[}{(n+1)^kq^{n+1}-q\sum_{j=0}^{k-1}\binom kjS_j(n)}{]}
 $$
-推导过程：传统艺能扰动法。
+证明：扰动法。
 $$
 S_k(n)=\sum_{i=0}^ni^kq^i=\sum_{i=1}^ni^kq^i=\sum_{i=0}^{n-1}i^kq^i+n^kq^n\\
 q\sum_{i=0}^{n-1}(i+1)^kq^i=\sum_{i=1}^{n-1}i^kq^i+n^kq^n\\
@@ -27,23 +28,94 @@ $$
 
 ### 斐波那契数
 
-定义：
+定义：$F_0=0,F_1=1,F_n=F_{n-1}+F_{n-2}$
+
+设转移矩阵$A=\mat{1 & 1\\1 & 0}$，则$\mat{F_n\\F_{n-1}}=A^{n-1}\mat{F_1\\F_0}$。
+
+且因$A=\mat{F_2 & F_1 \\ F_1 & F_0}$有$A^{n}=\mat{F_{n+1} & F_n\\F_n & F_{n-1}}$。
+
+---
+
+性质：$\displaystyle \sum_{k=1}^nF_k=F_{n+2}-1 $
+
+证明：$\displaystyle \sum_{k=1}^{n+1}F_k=\sum_{k=1}^{n}F_k+F_{n+1}=F_{n+2}-1+F_{n+1}=F_{n+3}-1$
+
+---
+
+性质：$\displaystyle \sum_{k=1}^nF_k^2=F_nF_{n+1}$
+
+证明：$\displaystyle \sum_{k=1}^{n+1}=\sum_{k=1}^nF_k^2+F_{n+1}^2=F_nF_{n+1}+F_{n+1}^2=F_{n+1}(F_{n}+F_{n+1})=F_{n+1}F_{n+2}$
+
+---
+
+性质：$\displaystyle \sum_{k=0}^{n-2}F_{k}F_{k+3}=F_n^2-1$
+
+证明：扰动平方和
+
 $$
-F_0=0,F_1=1,F_n=F_{n-1}+F_{n-2}
+\sum_{k=1}^nF_k^2=1+\sum_{k=2}^nF_k^2=\sum_{k=1}^{n-1}F_k^2+F_n^2\\
+\sum_{k=1}^{n-1}(F_{k+1}^2-F_k^2)=F_n^2-1\\
+\sum_{k=1}^{n-1}F_{k+2}F_{k-1}=F_n^2-1\\
 $$
 
-性质：
+---
+
+$$
+\mat{F_n\\F_{n-1}}=A^{n-k}\mat{F_k\\F_{k-1}}=\mat{F_{n-k+1}&F_{n-k}\\F_{n-k}&F_{n-k-1}}\mat{F_k\\F_{k-1}}\\
+F_n=F_kF_{n-k+1}+F_{n-k}F_{k-1}
+$$
+换元即得
+$$
+F_{a+b}=F_aF_{b+1}+F_{b}F_{a-1}=F_{a}F_{b-1}+F_{b}F_{a+1}
+$$
+
+---
+
+考虑$|A^n|=|A|^n$，于是有
+$$
+|A^n|=|A|^n=F_{n+1}F_{n-1}-F_n^2=(-1)^n|A^n|=|A|^n=F_{n+1}F_{n-1}-F_n^2=(-1)^n
+$$
+
+---
+
+性质：$\displaystyle \sum_{k=1}^nF_kF_{k+1}$
+
+---
+
+---
+
+（见线性递推-特征值分解部分）
+
+$A$的特征多项式为$p(\lambda)=(1-\lambda)(-\lambda)-1$。令$p(\lambda)=0$解得$\displaystyle \lambda=\frac{\pm\sqrt 5+1}{2}$。
+
+设其两个特征值为$\lambda_1, \lambda_2$，则有$\lambda_1\lambda_2-1,\lambda_1+\lambda_2=1$
+$$
+P=\mat{\lambda_1 & \lambda_2\\1 & 1};P^{-1}=\frac 1{\sqrt 5}\mat{-1 & \lambda_2\\1 & -\lambda_1}
+$$
+
+$$
+A^k
+=\frac 1{\sqrt 5}\mat{\lambda_1 & \lambda_2\\1 & 1}\mat{\lambda_1 ^k& 0\\ 0 & \lambda_2^k}\mat{-1 & \lambda_2\\1 & -\lambda_1}
+=\frac 1{\sqrt 5}\mat{\lambda_1^{k+1} &\lambda_2^{k+1}\\\lambda_1^k & \lambda_2^k}\mat{-1 & \lambda_2\\1 & -\lambda_1}\\
+=\frac 1{\sqrt 5}\mat{\lambda_2^{k+1}-\lambda_1^{k+1} & \lambda_1^{k+1}\lambda_2-\lambda_2^{k+1}\lambda_1\\\lambda_2^k-\lambda_1^k & \lambda_1^{k}\lambda_2-\lambda_2^{k}\lambda_1}
+=\frac 1{\sqrt 5}\mat{\lambda_2^{k+1}-\lambda_1^{k+1}&\lambda_2^k-\lambda_1^k\\\lambda_2^k-\lambda_1^k&\lambda_2^{k-1}-\lambda_1^{k-1}}
+$$
+
 $$
 F_n=\frac{1}{\sqrt 5}\left[\left(\frac{1+\sqrt 5}{2}\right)^n-\left(\frac{1-\sqrt 5}{2}\right)^n\right]\\
-\sum_{k=1}^{n}{F_k}=F_{n+2}-1\\
-\sum_{k=1}^{n}{F_k}=F_nF_{n+1}\\
+$$
+
+---
+
+
+$$
 \sum_{k=1}^{n}{F_{2k-1}}=F_{2n}\\
 \sum_{k=1}^{n}{F_{2k}}=F_{2n+1}-1\\
-F_n=F_mF_{n-m+1}+F_{m-1}F_{n-m}\\
 F_{n-1}F_{n+1}=F_n^2+(-1)^n\\
 gcd(F_n,F_m)=F_{gcd(n,m)}\\
 n|m \Leftrightarrow F(n)|F(m)
 $$
+
 
 OGF:
 $$
