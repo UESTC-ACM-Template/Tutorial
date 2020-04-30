@@ -1,3 +1,8 @@
+$$
+\def\brac#1{\left(#1\right)}
+\def\mat#1{\left[\begin{array}{cl}#1\end{array}\right]}
+$$
+
 # 线性代数
 
 ## 行列式与线性方程组
@@ -40,7 +45,7 @@ int det(mat a) {
 
 ### 模任意正整数意义下的行列式
 
-高斯消元+辗转相除，$O(n^3 \log P)$。
+高斯消元+辗转相除，$O(n^3 \log U)$。其中$U$是模数。
 
 ```cpp
 typedef vector<int> vec;
@@ -82,6 +87,7 @@ dbl det(mat a) {
                 swap(a[i], a[j]), res = -res;
         if (!sgn(a[i][i])) return 0; else res *= a[i][i];
         for (int j = i + 1; j != n; ++j) {
+            if (!sgn(a[j][i])) continue;
             double w = a[j][i] / a[i][i];
             for (int k = i; k != n; ++k)
                 a[j][k] -= w * a[i][k];
@@ -92,6 +98,23 @@ dbl det(mat a) {
 ```
 
 ## 线性空间与线性算子
+
+### 基变换
+
+考虑域$F$上的$n$维线性空间$V$，$m$维线性空间$W$和线性算子$T:V \to W$
+
+设$B=\mat{v_1,v_2,\cdots,v_n}$为$V$的基，$C=\mat{w_1,w_2,\cdots,w_m}$为$W$的一组基
+
+对于$V$中的向量$v$，其在$B$下的坐标为$x$，$W$中向量$w$,其在$C$下的坐标为$y$
+
+$T$的矩阵表示为$A$，则
+$$
+ \begin{CD}...@>\partial_*>>H_{q}(A)@>i_*>> H_{q}(X) @>j_*>> H_{q}(X,A)@>\partial_*>>H_{q-1}(A)@>i_*>>... \\  & @V{f|_A}_* VV & @VVf_* V @VVf_* V@V{f|_A}_* VV\\  ...@>\partial_*>>H_{q}(B)@>i_*>> H_{q}(Y) @>j_*>> H_{q}(Y,B)@>\partial_*>>H_{q-1}(B)@>i_*>>...  \end{CD}\\
+ \begin{CD}
+ ...@> \partial_ 2>>\\
+ \end{CD}
+$$
+
 
 ### 子空间投影
 

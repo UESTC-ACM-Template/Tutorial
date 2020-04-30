@@ -1,8 +1,7 @@
 $$
-\def\brac#1{\left(#1\right)}\def\mat#1{\left[\begin{array}{cl}#1\end{array}\right]}
+\def\brac#1{\left(#1\right)}
+\def\mat#1{\left[\begin{array}{cl}#1\end{array}\right]}
 $$
-
-
 
 # 线性递推
 

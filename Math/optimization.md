@@ -95,7 +95,7 @@ $$
 
 ## 一阶必要条件
 
-给定一阶可微的函数$，若$\bs x_0$使得$f$取得极值，则必有$\nabla f(\bs x_0)=0$。
+给定一阶可微函数$f$，若$\bs x_0$使得$f$取得极值，则必有$\nabla f(\bs x_0)=0$。
 
 注：这个应该每本高数书都证过了。
 
@@ -173,7 +173,7 @@ $$
 $$
 \mathscr L(\bs x, \bs \lambda, \bs \mu)=f(\bs x)+\bs \lambda^T \bs h(\bs x)+\bs \mu^T\bs g(\bs x)\\
 $$
-里面的$\bs \lambda$和$\bs \mu$被称为拉格朗日乘子（后者为KK/T乘子）。
+里面的$\bs \lambda$和$\bs \mu$被称为拉格朗日乘子（后者为KKT乘子）。
 
 注意到KKT条件的第一个式子等价于
 $$
@@ -215,9 +215,11 @@ $$
 
 例：支持向量机(SVM)是一个解决二分类问题的模型。其基本思想是使用一个超平面将两类数据点分开。
 
-这里考虑SVM的训练过程，训练的目的即是使两类点到超平面的距离尽可能大。
+这里考虑SVM的训练过程，训练的目的即是选定一个超平面，使两类点到该超平面的距离尽可能大。
 
-第$i$个数据点为$\bs x_i \in \R^n$，标签为$y_i \in \{-1, 1\}$。超平面方程为${\bs w}^T \bs x+b=0$，$\bs w$相当于超平面的法向量。
+数据集中第$i$个条数据为$\bs x_i \in \R^n$，标签为$y_i \in \{-1, 1\}$。
+
+超平面方程为${\bs w}^T \bs x+b=0$，$\bs w$相当于超平面的法向量。
 
 预测函数为$y=\bs w^T\bs x+b$。约束即使得训练集中不存在使得$|\bs w^T \bs x+b| <1$的点。
 
@@ -227,7 +229,7 @@ $$
 
 接下来考虑解出支持向量到超平面的距离。
 
-$\bs x_i$在超平面上的投影$\bs p$满足：$\bs w^T(\bs x_i+k \bs w)+b=0$。
+$\bs x_i$在超平面上的投影$\bs p$满足：$\bs w^T\bs p+b=\bs w^T(\bs x_i+k \bs w)+b=0$。
 
 展开：$\bs w^T \bs x_i+b+k\bs w^T\bs w=0$
 
@@ -237,12 +239,12 @@ $\bs x_i$在超平面上的投影$\bs p$满足：$\bs w^T(\bs x_i+k \bs w)+b=0$�
 
 得到优化问题
 $$
-\max \frac{1}{||w||^2}\\
+\max_{\bs w,b} \frac{1}{||\bs w||^2}\\
 s.t. \quad \forall i, y_i(\bs w^T\bs x_i+b) \geq 1
 $$
 等价于解
 $$
-\min \frac 12 \bs w^T\bs w\\
+\min_{\bs w,b} \frac 12 \bs w^T\bs w\\
 s.t. \quad \forall i, 1-y_i(\bs w^T\bs x_i+b) \leq 0
 $$
 

@@ -88,7 +88,7 @@ $$
 
 $A$的特征多项式为$p(\lambda)=(1-\lambda)(-\lambda)-1$。令$p(\lambda)=0$解得$\displaystyle \lambda=\frac{\pm\sqrt 5+1}{2}$。
 
-设其两个特征值为$\lambda_1, \lambda_2$，则有$\lambda_1\lambda_2-1,\lambda_1+\lambda_2=1$
+设其两个特征值为$\lambda_1, \lambda_2$，则有$\lambda_1\lambda_2=-1,\lambda_1+\lambda_2=1$
 $$
 P=\mat{\lambda_1 & \lambda_2\\1 & 1};P^{-1}=\frac 1{\sqrt 5}\mat{-1 & \lambda_2\\1 & -\lambda_1}
 $$
@@ -101,8 +101,10 @@ A^k
 =\frac 1{\sqrt 5}\mat{\lambda_2^{k+1}-\lambda_1^{k+1}&\lambda_2^k-\lambda_1^k\\\lambda_2^k-\lambda_1^k&\lambda_2^{k-1}-\lambda_1^{k-1}}
 $$
 
+
 $$
-F_n=\frac{1}{\sqrt 5}\left[\left(\frac{1+\sqrt 5}{2}\right)^n-\left(\frac{1-\sqrt 5}{2}\right)^n\right]\\
+F_n=\frac 15(\lambda_1^n-\lambda_2^n)=\frac{1}{\sqrt 5}\left[\left(\frac{1+\sqrt 5}{2}\right)^n-\left(\frac{1-\sqrt 5}{2}\right)^n\right]\\
+F_n^2=\frac 15\brac{\lambda_1^{2n}+\lambda_2^{2n}-2(-1)^n}
 $$
 
 ---
