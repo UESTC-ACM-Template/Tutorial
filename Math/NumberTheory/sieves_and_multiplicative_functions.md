@@ -304,7 +304,11 @@ S_h(n)=\sum_{i=1}^nh(i)
 =g(1)S_f(n)+\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\\
 S_f(n)=\left(S_h(n)-\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)\right)/g(1)=S_h(n)-\sum_{d=2}^ng(d)S_f\left(\left \lfloor \frac nd \right \rfloor\right)
 $$
-递归求出$S_f(n)$的值。利用整除分块并记忆化，则计算$f(n)$时需要进行$2\sqrt n$次求和，因此最终的复杂度是
+递归求出$S_f(n)$的值。
+
+注：积性函数在$1$处的取值必为$1$。
+
+利用整除分块并记忆化，则计算$f(n)$时需要进行$2\sqrt n$次求和，因此最终的复杂度是
 $$
 T(n)=\sum_{i=1}^\sqrt n{\sqrt i}+\sum_{i=1}^{\sqrt n}\sqrt {n/i}\leq \int_0^\sqrt n\left(\sqrt n+\sqrt {n/i}+C\right)=O(n^{3/4})
 $$
@@ -397,7 +401,7 @@ $$
 $$
 因此递推到不大于$\sqrt n$的质数就可以终止了。
 
-不难看出要求的即是
+最终要求的即是
 $$
 \sum_{ x \leq n \wedge x \in Primes}f(x)=\sum_{ x \leq n \wedge x \in Primes}P_f(x)=\sum_{ x \leq n \wedge x \in Primes}\sum_{k=0}^Ka_kx^k\\=\sum_{k=0}^Ka_k\sum_{ x \leq n \wedge x \in Primes}x^k=\sum_{k=0}^Ka_k g_k(\infty,n)=\sum_{k=0}^Ka_k g_k(\pi(\sqrt x),n)
 $$

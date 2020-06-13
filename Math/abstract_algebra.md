@@ -294,6 +294,8 @@ ord_G(g^k)=ord_{\Z_x}(k)=\frac{x}{\gcd(k,x)}=\frac{ord_G(g)}{\gcd(k,ord_G(g))}
 $$
 特别的，当$k|ord_G(g)$时有$ord_G(g^k)=ord_G(g)/k$。
 
+
+
 ### 群作用与轨道
 
 群经常被用来刻画各种集合的对称性，如二面体群$D_n$刻画了正$n$边形的对称性，而我们可以将这个过程描述为二面体群**作用**在了正多边形的顶点集上。群作用则是对这个动作的抽象。
@@ -336,7 +338,7 @@ $$
 
 
 
-定义（共轭）：给定群$G$的两个元素$a,b$，如果存在$g$使得$b=g^{-1}ag$称$h_1$与$h_2$共轭。
+定义（共轭）：给定群$G$的两个元素$a,b$，如果存在$g$使得$b=g^{-1}ag$则称$a$与$b$共轭。
 
 由共轭可以定义一个等价关系$\sim:a \sim b \Leftrightarrow \exist g \in G,b=g^{-1}ag$。
 
@@ -348,7 +350,7 @@ $G$的子集之间也有共轭的概念。即$A$与$B$共轭当且仅当$\exist 
 
 命题：设$G$作用在$S$上，则对$S$的任何一个轨道$O$有$\forall a, b \in O,\exists g, G_b=g^{-1}G_ag$。
 
-即对于某个轨道，其任意元素的稳定化子互相共轭。
+即对于某个轨道，其元素的稳定化子互相共轭。
 
 证明：因为$a,b$属于同一个轨道，所以$\exist g, b=ga$。
 
@@ -362,9 +364,11 @@ $G$的子集之间也有共轭的概念。即$A$与$B$共轭当且仅当$\exist 
 
 命题：$O_s$中的元素与$G_s$的陪集一一对应。
 
-证明：对于$\forall t \in O_s,\exist g \in G,t=gs$。设$\varphi:O_s\rightarrow G/G_s:t \mapsto gG_s$。$\varphi$显然是满射，因此这里只用证$\varphi$是单射。 设$t_1=g_1s,t_2=g_2s$则$\varphi(t_1)=\varphi(t_2)\Leftrightarrow g_1G_s=g_2G_s \Leftrightarrow g_2^{-1}g_1 \in G_s
-\Leftrightarrow t_1=g_2g_2^{-1}t_1=g_2g_2^{-1}g_1s=g_2s=t_2$
-
+证明：对于$\forall t \in O_s,\exist g \in G,t=gs$。设$\varphi:O_s\rightarrow G/G_s:t \mapsto gG_s$。$\varphi$显然是满射，因此这里只用证$\varphi$是单射。 设$t_1=g_1s,t_2=g_2s$则
+$$
+\varphi(t_1)=\varphi(t_2)\Leftrightarrow g_1G_s=g_2G_s \Leftrightarrow g_2^{-1}g_1 \in G_s
+\Leftrightarrow t_1=g_2g_2^{-1}t_1=g_2g_2^{-1}g_1s=g_2s=t_2
+$$
 因此$|O_s|=|G|/|G_s|$，证毕。
 
 
@@ -413,3 +417,11 @@ $$
 ## 域结构
 
 咕了
+
+
+
+## 附录
+
+### $D_n$在计算机中的表示
+
+二面体群$D_n=<r^2=p^n=1,pr=rp^{-1}>$

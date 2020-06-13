@@ -99,21 +99,78 @@ dbl det(mat a) {
 
 ## 线性空间与线性算子
 
-### 基变换
+### 基
 
-考虑域$F$上的$n$维线性空间$V$，$m$维线性空间$W$和线性算子$T:V \to W$
+线性无关的极大向量组被称为线性空间的一组基。
+
+命题：所有基大小相同。
+
+证明：
+
+
+
+命题：设$V$，$W$分别为$\mathbb F$上的$n,m$维线性空间，则对于$V$的一组基$B$，$W$的一组基$C$来说$T:V\to W$有唯一的矩阵表示$A \in \mathbb F^{m \times n}$。
+
+证明：考虑域$F$上的$n$维线性空间$V$，$m$维线性空间$W$和线性算子$T:V \to W$
 
 设$B=\mat{v_1,v_2,\cdots,v_n}$为$V$的基，$C=\mat{w_1,w_2,\cdots,w_m}$为$W$的一组基
 
-对于$V$中的向量$v$，其在$B$下的坐标为$x$，$W$中向量$w$,其在$C$下的坐标为$y$
+对于$V$中的向量$v$，其在$B$下的坐标为$x$，$W$中向量$w$，其在$C$下的坐标为$y$，$T$在基$B,C$下的矩阵表示为$A$，设
+$$
+T(v_i)=\sum_{j=1}^mw_ja_{ji}
+$$
+则有
+$$
+T(\vec v)=T(B\vec x)=T\brac{\sum_{i=1}^n\vec v_ix_i}=\sum_{i=1}^nT(\vec v_ix_i)=\sum_{i=1}^nT(\vec v_i)x_i\\
+=\sum_{i=1}^n\sum_{j=1}^ma_{ji}\vec w_jx_i=\sum_{j=1}^m\vec w_j\sum_{i=1}^na_{ji}x_i=\sum_{j=1}^m\vec w_jy_j
+$$
+由此有
+$$
+A=\{a_{ij}\},\vec y=A\vec x
+$$
 
-$T$的矩阵表示为$A$，则
 $$
- \begin{CD}...@>\partial_*>>H_{q}(A)@>i_*>> H_{q}(X) @>j_*>> H_{q}(X,A)@>\partial_*>>H_{q-1}(A)@>i_*>>... \\  & @V{f|_A}_* VV & @VVf_* V @VVf_* V@V{f|_A}_* VV\\  ...@>\partial_*>>H_{q}(B)@>i_*>> H_{q}(Y) @>j_*>> H_{q}(Y,B)@>\partial_*>>H_{q-1}(B)@>i_*>>...  \end{CD}\\
- \begin{CD}
- ...@> \partial_ 2>>\\
- \end{CD}
+\begin{CD}V@>T>>W\\@A{B}AA @AA{C}A\\\mathbb F^n @>A>>\mathbb F^m\end{CD}
 $$
+
+### 基变换
+
+设$B=\{\vec v_1,\cdots,\vec v_n\}$为$V$的一组基，$B'=\{\vec v'_1,\cdots,\vec v'_n\}$为另一组基。
+
+由基的定义，可将$v'_i$用$B$展开。即
+$$
+\vec v'_i=\sum_{j=1}^n\vec v_jp_{ji}
+$$
+写作矩阵形式即
+$$
+B'=\mat{\vec v'_1,\cdots,\vec v'_n}
+=\mat{\displaystyle\sum_{j=1}^np_{ij}\vec v_j}
+=\mat{\vec v_1, \cdots, \vec v_n}
+\mat{
+p_{11} & p_{12} & \cdots & p_{1n}\\
+p_{21} & p_{22} & \cdots & p_{2n}\\
+\vdots & \vdots & \ddots & \vdots \\
+p_{n1} & p_{n2} & \cdots & p_{nn}
+}
+=BP
+$$
+考虑基变换对向量的影响：设向量$\vec v$在$B$中坐标为$\vec x$，在$B'$中坐标为$\vec x'$，则
+$$
+\vec v=B\vec x=B'\vec x'
+$$
+所以有
+$$
+\vec x'=P^{-1}\vec x
+$$
+设$C=\{\vec w_1, \cdots , \vec w_m\}$为$W$的一组基，$C'=\{w'_1, \cdots, w'_m\}$为另一组基，同上有$C'=CQ$。
+
+考虑基变换对线性变换$T:v \to w$在基$B,C$下的矩阵的影响。
+
+设$T(v)=w$，则因$v=Bx=B'x'.w=Cy=C'y'$有
+
+$T(B'x')=C'y'$
+
+
 
 
 ### 子空间投影
