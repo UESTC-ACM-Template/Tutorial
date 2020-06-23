@@ -1,10 +1,170 @@
 # 网络优化问题
 
-若无特别声明，本章中的图均为大小有限的有向图。顶点集大小$|V|=n$,边集大小$|E|=m$。
+## 最小生成树
 
-在网络优化领域内，图中的顶点(vertex)被称为节点(node)，边(edge)被称为弧(arc)。因此在某些专著中网络的点集和边集分别用$N$和$A$表示。
+## 最小树形图
 
-因为作者非常懒不愿意提供例子，这里提供一本带有大量例子的网络流专著《Network-Flows-Theory-Algorithms-and-Applications》。
+在一个带权，可以存在重边的有向图$G$中，给定一个点$r$。找出一个包含所有点的子图$T$使得：
+
+1. 该子图中除$r$外任意一点入度均为1。
+2. 从$r$出发可到达其他任意一点。
+3. 边权和最小。
+
+则$T$是$G$的一个最小树形图。
+
+Edmonds算法共分三步：
+
+1. 通过加无穷边使图强连通
+2. 将整个图缩成一个点，即`contract`
+3. 对于某个（一些）特定的根`r`将图展开，即`expand`
+
+第二步：
+
+对于每个点，对其所有入边维护一个小根堆，下面实现中用的是左偏树，堆顶即为`top[x]`。
+
+`ine[x]`代表已经加入的`x`的入边。`prv[x]`表示通过`ine[x]`指向`x`的点。
+
+具体流程：
+
+1. 从任意一个点开始，记为`x`
+2. 从`x`的入边堆中挑出一条边权最小的`(u,v)`，记`y`为`u`所在超顶点（即普通顶点或环缩成的点）
+3. 检查`u`,`v`是否已经被缩进同一个环中，若已经被缩掉则将其从`x`的入边堆中取出并回到2.
+4. 否则将`(u,v)`接到`x`上，即设定`ine[x]`与`prv[x]`。若`u`还没有入边则说明未成环，将`x`设为`y`并回到2.
+5. 否则出现环，新建点`z`，沿着`prv[x]`走将环上所有点设为`z`的儿子
+6. 设当前走到了`x`，将`x`的入边堆中所有边的边权减去`x`在环上的入边边权后并入`z`的入边堆
+7. 将`x`设为`z`并回到2.
+
+注：因为图是强连通的，所以整个图必被缩成一个点。
+
+注2：上面的`x`,`y`,`z`都可能是某个环缩成的点，因而与`u`,`v`进行了区别。
+
+在缩点后的DMST中若选中边$(u,v)$，其中$v$在环上则需将$v$在环上的入边踢掉，对整个DMST的权值影响即为减去环上入边权值，因此将`x`的入边堆并入`z`的入边堆前需将`x`的入边堆中所有边权减去`val[ine[x]]`。
+
+打个懒标记并结合标记下推即可完成将整个堆的权值减去某定值的操作。
+
+找到某个点所在环需用并查集（即`f[x]`）维护来保证复杂度
+
+第三步：
+
+（我还没太看懂）
+
+$O(m \log n+kn)$
+
+其中$k$为`expand`次数。
+
+单次`contract`是$O(m\log n)$的，常数不大。
+
+对于每个不同的根`r`进行`expand`是$O(n)$的。
+
+根据<https://www.cs.princeton.edu/courses/archive/spring13/cos528/directed-mst-1.pdf>实现。
+
+```cpp
+typedef long long ll;
+
+const ll inf = INT_MAX;
+const int N, M;
+struct edge { int u, v; ll w; } es[M];
+int ls[M], rs[M], dis[M]; ll val[M], tag[M];
+
+void update(int x, ll t) { val[x] += t; tag[x] += t; }
+
+void push_down(int x) {
+    if (ls[x]) update(ls[x], tag[x]);
+    if (rs[x]) update(rs[x], tag[x]);
+    tag[x] = 0;
+}
+
+int merge(int x, int y) {
+    if (!x || !y) return x | y;
+    if (val[x] > val[y]) swap(x, y);
+    push_down(x); rs[x] = merge(rs[x], y);
+    if (dis[ls[x]] < dis[rs[x]]) swap(ls[x], rs[x]);
+    dis[x] = dis[rs[x]] + 1; return x;
+}
+
+int f[N]; int find(int x) { return f[x] ? f[x] = find(f[x]) : x; }
+int top[N], fa[N], prv[N], ine[N], nc;
+vector<int> ch[N];
+
+int gn(int cnt) {
+    while (cnt--) {
+        int x = ++nc;
+        top[x] = fa[x] = prv[x] = ine[x] = f[x] = 0;
+        ch[x].clear();
+    }
+    return nc;
+}
+
+void contract(int n, int m) {
+    nc = 0; gn(n);
+    for (int i = 1; i <= n; ++i) es[++m] = { i % n + 1, i, inf };
+    for (int i = 1; i <= m; ++i) val[i] = es[i].w;
+    fill_n(ls + 1, m, 0); fill_n(rs + 1, m, 0);
+    fill_n(tag + 1, m, 0); fill_n(dis + 1, m, 1);
+    for (int i = 1; i <= m; ++i) top[es[i].v] = merge(top[es[i].v], i);
+    int x = 1;
+    while (top[x]) {
+        int i = top[x], y = find(es[i].u);
+        if (y == x) top[x] = merge(ls[i], rs[i]);
+        else {
+            ine[x] = i; prv[x] = y;
+            if (!ine[es[i].u]) x = y;
+            else {
+                int z = gn(1);
+                while (!fa[x]) {
+                    fa[x] = z; ch[z].push_back(x);
+                    f[find(x)] = z;
+                    if (top[x]) update(top[x], -val[ine[x]]);
+                    top[z] = merge(top[z], top[x]);
+                    x = prv[x];
+                }
+                x = z;
+            }
+        }
+    }
+}
+
+int fa2[N], ine2[N];
+vector<int> expand(int n, int r) {
+    copy_n(fa + 1, nc, fa2 + 1);
+    copy_n(ine + 1, nc, ine2 + 1);
+    vector<int> s, res; s.push_back(r);
+    while (!s.empty()) {
+        int x = s.back(); s.pop_back();
+        int i = ine2[x]; ine2[es[i].v] = i;
+        for (int y = es[i].v; fa2[y]; y = fa2[y]) {
+            for (int z : ch[fa2[y]]) {
+                if (z == y) continue; fa2[z] = 0;
+                if (!ch[z].empty()) s.push_back(z);
+            }
+        }
+    }
+    for (int i = 1; i <= n; ++i) if (i != r) res.push_back(ine2[i]);
+    return res;
+}
+```
+
+```cpp
+//  Example:
+//  After reading edges into es[1~m]...
+contract(n, m);
+vector<int> res = expand(n, r);
+ll ans = 0; bool fail = 0;
+for (int i : res) {
+    if (es[i].w == inf)
+        fail = 1;
+    ans += es[i].w;
+}
+
+if (fail) cout << -1 << endl;
+else cout << ans << endl;
+```
+
+应用：
+
+求以任意一点为根的DMST：
+
+新建点`n+1`，连$n$条边权足够大（如原图中的边权和+1）的边到其他所有点，并求以`n+1`为根的DMST即可。
 
 ## 最短路
 
@@ -528,8 +688,6 @@ s.t.\\
 \forall {(u,v) \in E},z_{uv} \geq 0
 $$
 费用流在运行过程中得到的是$x$坐标为流量，$y$坐标为总代价的下凸折线（帕累托最优）。其中的每一条线段所在直线的$y$轴截距即$-\displaystyle \sum_{(u,v) \in E}z_{uv}$，斜率即最短$s-t$路长度$d_t-d_s$。截距和斜率也组成了一条凸折线。在这条折线的横坐标上二分即可。
-
-
 
 ---
 
