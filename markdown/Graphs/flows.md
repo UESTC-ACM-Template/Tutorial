@@ -1,44 +1,69 @@
 ## 最大流
 
-定义（$s-t$流）：给定一张图$G=(V,E)$和容量函数$c:E\rightarrow \R$，图$G$上的$s-t$流被定义为$f:E\rightarrow \R$，满足
+定义（$s-t$流）：给定一张图$G=(V,E)$和容量函数$c:E\rightarrow \R$，图$G$上的$s-t$流满足如下约束：
 $$
-\forall (u,v) \in E,0 \leq f(u,v) \leq c(u,v)\\
-\forall v \in V, \sum_{(u,v) \in E}f(u,v)-\sum_{(v,u) \in E}f(v,u)=
+\forall (u,v) \in E,0 \leq x_{uv} \leq c_{uv}\\
+\forall v \in V, \sum_{(u,v) \in E}x_{uv}-\sum_{(v,u) \in E}x_{vu}=
 \begin{cases}
--x&v=s\\
-x&v=t\\
+-f&v=s\\
+f&v=t\\
 0&else
 \end{cases}\\
 $$
-其中$s$被称为源点，$t$被称为汇点，$x$被称为$f$的大小。
+其中$s$被称为源点，$t$被称为汇点，$f$被称为流的大小。
 
 第一行描述的是每条边的流量限制，第二行描述的是每个节点的流量平衡。
 
 第二行的第一个和式即从该点出去的流量，第二个和式即进入该点的流量。
 
-定义（最大流）：对于一个带容量的图$G$，其最大流即大小最大的流。（废话）
+定义（最大流）：对于一个带容量的图$G$，其最大流即大小最大的流。
 
 寻找最大流的一个朴素思路是每次选定一条路径，将这条路径上的流量尽可能增大，然后再寻找下一条，直到找不到为止。
 
 定义（残量网络）：给定一个图$G=(V,E)$和容量函数$c:E\rightarrow \R$，对于其上的一个$s-t$流$f$，定义残量网络为将容量函数更换成$c':E\rightarrow \R$的流量网路且满足
 $$
-c'(u,v)=\begin{cases}
-c(u,v)-f(u,v) & (u,v) \in E\\
-f(v,u) & (v,u) \in E
+c'_{uv}=\begin{cases}
+c_{uv}-x_{uv} & (u,v) \in E\\
+x_{vu} & (v,u) \in E
 \end{cases}
 $$
 
 第一种情况很好理解。对于第二种情况，考虑如下情景：
 
-存在一条流$s\xrightarrow{p_1}u\rightarrow v\xrightarrow {p_2}t$和两条路径$s\xrightarrow{p_3}v$与$u\xrightarrow{p_4}t$。
+```mermaid
+graph LR
+s((s))--c/c-->u((u))--c/0-->t((t))
+s--c/0-->v((v))--c/c-->t
+u--c/c-->v
 
-不妨设$c(s,u)=c(s,v)=c(u,t)=c(v,t)=c(u,v)=\delta$。
+```
 
 原网络的最大流应是$s\rightarrow u\rightarrow t$有$c$的流量，$s\rightarrow v \rightarrow t$也有$c$的流量，大小为$c+c=2c$。
 
-但这时前面的朴素算法走进了死胡同无法寻找更大的流，原因是无法将$(u,v)$上的流撤销。
+这时前面的朴素算法无法寻找更大的流，因为无法将$(u,v)$上的流撤销。
 
-残量网络通过引入反向边来实现撤销机制。即若一条边$(u,v)$已经有$f(u,v)$的流，而通过$s \rightarrow v$和$u \rightarrow t$都可以增加$\delta \leq f(u,v)$的流，那么将$f(u,v)$减少$\delta$并将那两条路径增加$\delta$即可在保持流量平衡的前提下找到更大的流。
+残量网络通过引入反向边来实现撤销机制。即若一条边$(u,v)$已经有$x_{uv}$的流，而通过$s \rightarrow v$和$u \rightarrow t$都可以增加$\delta \leq x_{uv}$的流，那么将$x_{uv}$减少$\delta$并将那两条路径增加$\delta$即可在保持流量平衡的前提下找到更大的流。即此时残量网络如下:
+
+
+
+
+
+```mermaid
+graph LR
+s((s))
+u((u))
+t((t))
+v((v))
+s--0-->u
+u--c-->s
+u--c-->t
+s--c-->v
+v--c-->u
+v--0-->t
+
+```
+
+
 
 定义（增广路）：给定容量网络$G$和流$f$，其上的$s-t$路被称为增广路当且仅当其在残量网络中的任意一条边剩余容量均大于$0$。
 
@@ -112,7 +137,7 @@ EK算法的过程即使用BFS寻找边数最少的增广路进行增广。
 
 #### ISAP
 
-（我不知道为啥很多人DFS回溯时能直接将$u$的距离$+1$完事而不是像书上写的$\displaystyle d(u)=\min_{c(u,v) \geq 0} d(v)+1$，所以咕了）
+（我不知道为啥很多人DFS回溯时能直接将$u$的距离$+1$完事而不是像书上写的$\displaystyle d(u)=\min_{c_{uv} \geq 0} d(v)+1$，所以咕了）
 
 #### Dinic
 
