@@ -129,6 +129,8 @@ $$
 
 #### Ford-Fulkerson
 
+就嗯找增广路，指数级。
+
 #### Edmonds-Karp
 
 EK算法的过程即使用BFS寻找边数最少的增广路进行增广。

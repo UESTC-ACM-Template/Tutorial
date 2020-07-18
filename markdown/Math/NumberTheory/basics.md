@@ -1,3 +1,8 @@
+$$
+\def\floor#1{\left\lfloor #1 \right\rfloor}
+\def\ceil#1{\left\lceil #1 \right\rceil}
+$$
+
 ## 整除与因子
 
 对于正整数$a,b$，若存在正整数$k$使得$ak=b$，则称$$整除$b$，记作$a|b$。
@@ -78,7 +83,7 @@ vector<int> prime_factorization(int n) {
 
 在C++中，`q=a/b`而`r=a%b`。
 
-定义（同余）：对于模数$m$，可以定义一个$\Z$上的等价关系$\equiv_m$，$a \equiv_m b$当且仅当存在整数$k$使得$a+km=b$。一般记作$a \equiv b \mod m$。
+定义（同余）：对于模数$m$，可以定义一个$\Z$上的等价关系$\equiv_m$，$a \equiv_m b$当且仅当存在整数$k$使得$a+km=b$。一般记作$a \equiv b \bmod m$。
 
 等价关系$\equiv_m$将$\Z$划分成了$m$个剩余类$\bar 0,\bar 1,\cdots ,\overline{m-1}$。
 
@@ -86,19 +91,19 @@ vector<int> prime_factorization(int n) {
 
 模意义下的加法和乘法满足交换律、结合律、分配律。
 
-命题：若$a \equiv b \mod m$，则$ka \equiv kb \mod km$
+命题：若$a \equiv b \bmod m$，则$ka \equiv kb \bmod km$
 
 证明：因为$a=dm+b$，所以$ka=dkm+kb$。
 
 ## 欧几里得算法
 
-命题：对于正整数$a,b$，$\gcd (a,b)=\gcd(b, a \mod b)$。
+命题：对于正整数$a,b$，$\gcd (a,b)=\gcd(b, a \bmod b)$。
 
-证明：设$\gcd(a,b)=d_1,\gcd(b, a \mod b)=d_2$。
+证明：设$\gcd(a,b)=d_1,\gcd(b, a \bmod b)=d_2$。
 
-由定义得存在$k_1,k_2 \in \Z$使得$a=k_1d_1,b=k_2d_1$，则$a \mod b=a-\lfloor a/b \rfloor b=(k_1-\lfloor a/b \rfloor k_2)d_1$，因此$d_1|a \mod b$。所以$d_1 | d_2$。
+由定义得存在$k_1,k_2 \in \Z$使得$a=k_1d_1,b=k_2d_1$，则$a \bmod b=a-\lfloor a/b \rfloor b=(k_1-\lfloor a/b \rfloor k_2)d_1$，因此$d_1|a \bmod b$。所以$d_1 | d_2$。
 
-由定义得存在$k_1,k_2 \in \Z$使得$b=k_1d_2,a \mod b=k_2d_2$，则$a=a \mod b+\lfloor a/b \rfloor b=(k_2+k_1\lfloor a/b \rfloor )d_2$，因此$d_2 | a$。所以$d_2 | d_1$。
+由定义得存在$k_1,k_2 \in \Z$使得$b=k_1d_2,a \bmod b=k_2d_2$，则$a=a \bmod b+\lfloor a/b \rfloor b=(k_2+k_1\lfloor a/b \rfloor )d_2$，因此$d_2 | a$。所以$d_2 | d_1$。
 
 于是$d_1=d_2$。
 
@@ -117,15 +122,26 @@ int euclid(int a, int b) {
 
 对欧几里得算法进行一些修改可以求得一组系数$u,v$使得$au+bv=\gcd (a,b)$。
 
-设欧几里得算法运行时每一轮迭代参数分别是$a_1,a_2,\cdots a_n$，其中$a_n=0$，$a_{n-1}=\gcd(a,b)$，且对于$i \geq 1$有$a_{i+2}=a_i \mod a_{i-1}$。
+设欧几里得算法运行时每一轮迭代参数分别是$a_1,a_2,\cdots a_n$，其中$a_n=0$，$a_{n-1}=\gcd(a,b)$，且对于$i \geq 1$有$a_{i+2}=a_i \bmod a_{i-1}$。
 
 设$a_i=q_i a_{i+1}+a_{i+2}$，其中$q_i=\lfloor a_i / a_{i+1} \rfloor$且$u_ia_i+v_ia_{i+1}=d$，则
 $$
 u_ia_i+v_ia_{i+1}=u_i(q_ia_{i+1}+a_{i+2})+v_ia_{i+1}=(u_iq_i+v_i)a_{i+1}+u_ia_{i+2}=u_{i+1}a_{i+1}+v_{i+1}a_{i+2}
 $$
-因此$u_i=v_{i+1},v_{i}=u_{i+1}-u_{i}q_{i}$。
+因此$u_i=v_{i+1},v_{i}=u_{i+1}-q_{i}u_{i}$。
 
-迭代终点为$1 \cdot a_{n-1}+0\cdot a_n=\gcd(a,b)$。
+递归终点为$1 \cdot a_{n-1}+0\cdot a_n=\gcd(a,b)$。
+
+注意到有
+$$
+v_{i}=-q_{i}v_{i+1}+v_{i+2}
+$$
+
+$$
+v_{n-1}=0 \leq a_{n-1},v_{n-2}=-q_{n-2}v_{n-1}+v_{n}=v_n=1 \leq a_{n-2}
+$$
+
+当$i<n$时有$|v_i|=|-q_iv_{i+1}+v_{i+2}| \leq q_i|v_{i+1}|+|v_{i+2}|\leq q_ia_{i+1}+a_{i+2}=a_i$，因此最终得到的$u_i$和$v_i$的绝对值不会超过$a_1$和$a_2$的绝对值。
 
 ```cpp
 pair<int, int> ext_euclid(int a, int b) {
@@ -169,11 +185,11 @@ $$
 
 ## 一次同余方程
 
-模意义下的除法问题可以描述为解一次同余方程$ax \equiv b \mod m$。
+模意义下的除法问题可以描述为解一次同余方程$ax \equiv b \bmod m$。
 
-定义（一次同余方程）：对于模数$m$，给定$a,b$求$x$使得$ax \equiv b \mod m$。
+定义（一次同余方程）：对于模数$m$，给定$a,b$求$x$使得$ax \equiv b \bmod m$。
 
-由同余的意义可得，一次同余方程的解集与不定方程$ax + my = b$的解集相同，即$x=\frac{km+bu}{d}$，也可写成$$x \equiv \frac {bu}{d} \mod \frac md$$
+由同余的意义可得，一次同余方程的解集与不定方程$ax + my = b$的解集相同，即$x=\frac{km+bu}{d}$，也可写成$$x \equiv \frac {bu}{d} \bmod \frac md$$
 
 在模$m$的意义下为以下同余类：$$\overline{\frac md+\frac {bu}d},\overline{\frac {2m}d+\frac {bu}d}，\cdots$$
 
@@ -181,12 +197,12 @@ $$
 
 命题：对于质数$p$，求$1$到$n$内所有数的逆元可用以下递推式求解：
 $$
-a^{-1}\equiv (p \mod a)^{-1}(p - \lfloor p/a\rfloor)
+a^{-1}\equiv (p \bmod a)^{-1}(p - \lfloor p/a\rfloor)
 $$
 设$p=qa+r(0 \leq r <a)$，则
 $$
-\left((p-q)r^{-1}\right)a=(p-q)r^{-1}(p-r)/q\equiv(p-q)(r^{-1}p-1)q^{-1}\mod p\\
-=r^{-1}q^{-1}p^2-(r^{-1}+q^{-1})p+1\equiv1 \mod p
+\left((p-q)r^{-1}\right)a=(p-q)r^{-1}(p-r)/q\equiv(p-q)(r^{-1}p-1)q^{-1}\bmod p\\
+=r^{-1}q^{-1}p^2-(r^{-1}+q^{-1})p+1\equiv1 \bmod p
 $$
 
 递推边界条件为`inv[1]=1`。时间复杂度$O(n)$。
@@ -197,10 +213,10 @@ $$
 
 $$
 \begin{cases}
-x & \equiv & b_1 \mod m_1\\
-x & \equiv & b_2 \mod m_2\\
+x & \equiv & b_1 \bmod m_1\\
+x & \equiv & b_2 \bmod m_2\\
 & \vdots &\\
-x & \equiv & b_n \mod m_n
+x & \equiv & b_n \bmod m_n
 \end{cases}
 $$
 
@@ -211,15 +227,15 @@ $$
 定理（中国剩余定理）：当$m_i$两两互质时，方程组有解
 
 $$
-x \equiv \sum_{i=1}^{n} b_iu_iv_i \mod M
+x \equiv \sum_{i=1}^{n} b_iu_iv_i \bmod M
 $$
 
 其中
 $$
-M=\prod_{i=1}^{n}m_i,u_i=\frac{M}{m_i},u_iv_i \equiv 1 \mod m_i
+M=\prod_{i=1}^{n}m_i,u_i=\frac{M}{m_i},u_iv_i \equiv 1 \bmod m_i
 $$
 
-证明：考虑第$i$项，因为$\gcd(u_i, m_i)=1$，所以$v_i$存在且唯一。因为当$i \neq j$时有$m_j|u_i$，所以$b_iu_iv_i \equiv 0 \mod m_j$，否则有$b_iu_iv_i \equiv b_i \mod m_i$。因此第$i$项对第$i$个方程的贡献是$b_i$，对其他方程都是$0$。
+证明：考虑第$i$项，因为$\gcd(u_i, m_i)=1$，所以$v_i$存在且唯一。因为当$i \neq j$时有$m_j|u_i$，所以$b_iu_iv_i \equiv 0 \bmod m_j$，否则有$b_iu_iv_i \equiv b_i \bmod m_i$。因此第$i$项对第$i$个方程的贡献是$b_i$，对其他方程都是$0$。
 
 从另一个角度来考虑，即将两个一次同余方程合并。
 
@@ -252,10 +268,10 @@ $$
 解得
 
 $$
-x\equiv b_1+\frac{(b_2-b_1)um_1}{d} \mod \frac{m_1m_2}{d}
+x\equiv b_1+\frac{(b_2-b_1)um_1}{d} \bmod \frac{m_1m_2}{d}
 $$
 
-将同余式依次合并至$x \equiv 0 \mod 1$即可解出模数任意的一次同余方程组。
+将同余式依次合并至$x \equiv 0 \bmod 1$即可解出模数任意的一次同余方程组。
 
 ## 顶和底
 
@@ -389,7 +405,7 @@ $$
 ```
 struct pf { ll p, e, q; };	//	pow(p,e)=q
 vector<pf> prime_factorization(ll n);
-ll qpm(ll a, ll b, ll m);	//	returns pow(a, b) mod m
+ll qpm(ll a, ll b, ll m);	//	returns pow(a, b) bmod m
 ll phi(ll n);
 
 //	phn = phi(n), pfs = prime_factorization(phi(n))
@@ -408,13 +424,13 @@ $$
 $$
 因此有
 $$
-\forall a, \gcd(a,n)=1 \Rightarrow a^b \equiv a ^{b \mod \varphi(n)} \mod n
+\forall a, \gcd(a,n)=1 \Rightarrow a^b \equiv a ^{b \bmod \varphi(n)} \bmod n
 $$
 此即欧拉降幂。
 
 这个定理同时提供了求逆元的另一个思路（区别于扩展欧几里得）。即当$\gcd(a,n)=1$时有
 $$
-a^{-1} \equiv a^{\varphi(n)-1} \mod n
+a^{-1} \equiv a^{\varphi(n)-1} \bmod n
 $$
 
 ### 扩展欧拉降幂
@@ -423,33 +439,33 @@ $$
 
 这里只考虑$b \geq \varphi(n)$的情况。设$\displaystyle a=m\gcd(a,n)=m\prod_{i=1}^kp_i^{\alpha_i},n=\prod_{i=1}^kp_i^{\beta_i}$，其中$\gcd(m,n)=1$。
 $$
-a^b\equiv m^{b \mod \varphi(n)}\left(\prod_{i=1}^kp_i^{\alpha_ib}\right) \mod \prod_{i=1}^kp_i^{\beta_i}
+a^b\equiv m^{b \bmod \varphi(n)}\left(\prod_{i=1}^kp_i^{\alpha_ib}\right) \bmod \prod_{i=1}^kp_i^{\beta_i}
 $$
 
 左半部分已经解决，考虑右半部分。对每个$p_i$分别解决。
 
-注意到$p_i^x \mod wp_i^r$关于$x$一定存在循环节（考虑一个每个点出度均为1的有向图）。
+注意到$p_i^x \bmod wp_i^r$关于$x$一定存在循环节（考虑一个每个点出度均为1的有向图），这里$\gcd(w,p_i)=1$。
 
-这里给出一个引理：
+存在引理：
 $$
-p_i^{b} \equiv p_i^{b \mod \varphi(n)+\varphi(n)} \mod n
+p_i^{b} \equiv p_i^{b \bmod \varphi(n)+\varphi(n)} \bmod n
 $$
 证明：
 
 设$n=w p_i^r$，其中$\gcd(w,p_i)=1$，则有
 $$
-p_i^{\varphi(n)}\equiv \left(p_i^{\varphi(w)}\right)^{\varphi(n)/\varphi(w)}\equiv1 \mod w
+p_i^{\varphi(n)}\equiv \left(p_i^{\varphi(w)}\right)^{\varphi(n)/\varphi(w)}\equiv1 \bmod w
 $$
 两边同乘$p_i^r$得
 $$
-p_i^{\varphi(n)+r}\equiv p_i^r \mod n
+p_i^{\varphi(n)+r}\equiv p_i^r \bmod n
 $$
 
 将两边指数同时加上$1,2,\cdots$即可得到
 
 命题：当$b \geq r$时，有
 $$
-p_i^{b}\equiv p_i^{b+\varphi(n)} \mod n
+p_i^{b}\equiv p_i^{b+\varphi(n)} \bmod n
 $$
 这意味着当$b \geq r+\varphi(n)$时，可以将$b$替换为$b-\varphi(n)$。
 
@@ -467,42 +483,36 @@ $$
 
 由此可得更通用的形式：当$b \geq \varphi(n)$时
 $$
-p_i^{b} \equiv p_i^{b \mod \varphi(n)+\varphi(n)}
+p_i^{b} \equiv p_i^{b \bmod \varphi(n)+\varphi(n)}
 $$
 因为$\alpha_i \geq 1$，所以有
 $$
-p_i^{\alpha_ib}\equiv p_i^{\alpha_i b \mod \varphi(n)+\varphi(n)}
+p_i^{\alpha_ib}\equiv p_i^{\alpha_i b \bmod \varphi(n)+\varphi(n)}
 $$
 所以
 $$
-a^{b}\equiv m^{b \mod \varphi(n)}\left(\prod_{i=1}^kp_i^{\alpha_ib \mod \varphi(n)+\varphi(n)}\right) \mod n
+a^{b}\equiv m^{b \bmod \varphi(n)}\left(\prod_{i=1}^kp_i^{\alpha_ib \bmod \varphi(n)+\varphi(n)}\right) \bmod n
 $$
-因为$\gcd(m,n)=1$，所以$m^{\varphi(n)} \equiv 1 \mod n$，所以
+因为$\gcd(m,n)=1$，所以$m^{\varphi(n)} \equiv 1 \bmod n$，所以
 
 定理（扩展欧拉降幂）：对于任意$a,b,n \geq 1$有
 $$
 a^b \equiv 
 \begin{cases}
-a^{b \mod \varphi(n)} & \gcd(a,n) =1\\
+a^{b \bmod \varphi(n)} & \gcd(a,n) =1\\
 a^{b} & \gcd(a,n) \neq 1 \wedge b < \varphi(n)\\
-a^{b \mod \varphi(n)+\varphi(n)} \mod n & \gcd(a,n) \neq 1 \wedge b \geq \varphi(n)
+a^{b \bmod \varphi(n)+\varphi(n)} \bmod n & \gcd(a,n) \neq 1 \wedge b \geq \varphi(n)
 \end{cases}
 $$
-
-
-
-
 
 定理（Bauer）：
 
 (1): 如果$p$是$m$的一个奇素因子，且$p^\alpha$是$p$能整除$m$的最高幂次，则有
 $$
-\prod_{i,\gcd(m,i)=1}(x-i)\equiv(x^{p-1}-1)^{\varphi(m)/(p-1)} \mod p^\alpha
+\prod_{i,\gcd(m,i)=1}(x-i)\equiv(x^{p-1}-1)^{\varphi(m)/(p-1)} \bmod p^\alpha
 $$
 (2): 如果$m$是偶数，且$2^\alpha$是$2$能整除$m$的最高幂次，则有
 $$
-\prod_{i,\gcd(m,i)=1}(x-i)\equiv(x^{2}-1)^{\varphi(m)/2} \mod 2^\alpha
+\prod_{i,\gcd(m,i)=1}(x-i)\equiv(x^{2}-1)^{\varphi(m)/2} \bmod 2^\alpha
 $$
 
-
-## 
