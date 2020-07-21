@@ -59,6 +59,8 @@ $$
 T(G)=\det L(G)[u]=\det L(G /(u,v))[(u,v)]+\det L(G\setminus (u,v))[u]=T(G \setminus (u,v))+T(G /(u,v))
 $$
 
+注：本证明译自某谱图论专著相关讲义
+
 ## 树计数
 
 ### Prufer序列
@@ -127,29 +129,45 @@ $$
 
 考虑欧拉变换的定义可写出OGF相关的方程：
 
-$$f(x)=x \mathscr E(f(x))=x \exp \left( \sum_{j=1}^{+\infty} \frac {f(x^j)}{j} \right)$$
+$$
+f(x)=x \mathscr E(f(x))=x \exp \left( \sum_{j=1}^{+\infty} \frac {f(x^j)}{j} \right)
+$$
 
 两边取对数
 
-$$\ln f(x)= \ln x + \sum_{j=1}^{+\infty}\frac{f(x^j)}{j}$$
+$$
+\ln f(x)= \ln x + \sum_{j=1}^{+\infty}\frac{f(x^j)}{j}
+$$
 
 两边求导
 
-$$\frac{f'(x)}{f(x)}=\frac 1 x+ \sum_{j=1}^{+\infty}x^{j-1}f'(x^j)$$
+$$
+\frac{f'(x)}{f(x)}=\frac 1 x+ \sum_{j=1}^{+\infty}x^{j-1}f'(x^j)
+$$
 
-$$x f'(x)=f(x)\left(1+\sum_{j=1}^{+\infty}x^jf'(x^j)\right)$$
+$$
+x f'(x)=f(x)\left(1+\sum_{j=1}^{+\infty}x^jf'(x^j)\right)
+$$
 
 设
 
-$$g(x)=\sum_{j=1}^{+\infty}x^jf'(x^j)$$
+$$
+g(x)=\sum_{j=1}^{+\infty}x^jf'(x^j)
+$$
 
 可得
 
-$$b_i=\sum_{j | i}ia_i$$
+$$
+b_i=\sum_{j | i}ia_i
+$$
 
-$$i a_i=a_i+\sum_{j=1}^{i-1}a_jb_{i-j}$$
+$$
+i a_i=a_i+\sum_{j=1}^{i-1}a_jb_{i-j}
+$$
 
-$$a_i=\frac 1{i-1}\sum_{j=1}^{i-1}a_jb_{i-j}$$
+$$
+a_i=\frac 1{i-1}\sum_{j=1}^{i-1}a_jb_{i-j}
+$$
 
 注：这里$a_0=b_0=0,a_1=1$。
 
@@ -159,7 +177,9 @@ $$a_i=\frac 1{i-1}\sum_{j=1}^{i-1}a_jb_{i-j}$$
 
 若根不是重心，则根有一个大小至少为$\left \lfloor \frac n2 \right \rfloor + 1$的子树。枚举该子树大小可得
 
-$$g_n=f_n-\sum_{i=\left \lfloor \frac n2 \right \rfloor + 1}^{n-1}f_if_{n-i}$$
+$$
+g_n=f_n-\sum_{i=\left \lfloor \frac n2 \right \rfloor + 1}^{n-1}f_if_{n-i}
+$$
 
 注意到有两个重心的时候，有一类树被统计了两次。即有两个重心且两边不同构的树。该类树的数量为$\binom {f_{\frac n2}}{2}$，减去即可。
 
@@ -169,9 +189,11 @@ $$g_n=f_n-\sum_{i=\left \lfloor \frac n2 \right \rfloor + 1}^{n-1}f_if_{n-i}$$
 
 对于满足某些性质的图（如欧拉图，即顶点度数均为偶数），用可以不连通的所有方案推广到连通的所有方案的情况可通过将所有方案减去不连通的方案获得。如枚举$1$号点所在连通块大小$k$，则除$1$号点之外的点共有$\binom{n-1}{k-1}$种方案：
 
-$$f_n=g_n-\sum_{k=1}^{n-1}{\binom{n-1}{k-1}f_kg_{n-k}}$$
+$$
+f_n=g_n-\sum_{k=1}^{n-1}{\binom{n-1}{k-1}f_kg_{n-k}}
+$$
 
-也可通过指数生成函数进行计数，即$G(x)=lnF(x)$，其中$F(x),G(x)$分别为$f_n,g_n$的EGF。具体见“$e^{F(x)}$的组合意义”
+也可通过指数生成函数进行计数，即$G(x)=\ln F(x)$，其中$F(x),G(x)$分别为$f_n,g_n$的EGF。具体见“$e^{F(x)}$的组合意义”
 
 ### 有标号二分图计数
 
@@ -179,29 +201,44 @@ $$f_n=g_n-\sum_{k=1}^{n-1}{\binom{n-1}{k-1}f_kg_{n-k}}$$
 
 设大小为$n$，有$m$个连通块的二分图数量为$F(n,m)$，则有：
 
-$$F(n,m)=\sum_{k=1}^{n-m+1}{\binom{n-1}{k-1}F(k,1)F(n-k,m-1)}$$
+$$
+F(n,m)=\sum_{k=1}^{n-m+1}{\binom{n-1}{k-1}F(k,1)F(n-k,m-1)}
+$$
+设$G(n)$为大小为$n$，对顶点进行了黑白染色的二分图数量，钦定$m$个黑点余下为白点并任意连边可得:
 
-设$G(n)$为大小为$n$，进行了黑白染色的二分图数量，则有:
+$$
+G(n)=\sum_{m=0}^n{\binom{n}{m}2^{m(n-m)}}=\sum_{m=1}^n{2^mF(n,m)}
+$$
 
-$$G(n)=\sum_{m=0}^n{\binom{n}{m}2^{m(n-m)}}=\sum_{m=1}^n{2^mF(n,m)}$$
+$$
+=2^1F(n,1)+\sum_{m=2}^n{2^m\sum_{k=1}^{n-m+1}{\binom{n-1}{k-1}F(k,1)F(n-k,m-1)}}
+$$
 
-$$=2^1F(n,1)+\sum_{m=2}^n{2^m\sum_{k=1}^{n-m+1}{\binom{n-1}{k-1}F(k,1)F(n-k,m-1)}}$$
+$$
+=2F(n,1)+\sum_{k=1}^{n-1}{\binom{n-1}{k-1}F(k,1)\sum_{m=2}^{n-k+1}{2^mF(n-k,m-1)}}
+$$
 
-$$=2F(n,1)+\sum_{k=1}^{n-1}{\binom{n-1}{k-1}F(k,1)\sum_{m=2}^{n-k+1}{2^mF(n-k,m-1)}}$$
+$$
+=2F(n,1)+2\sum_{k=1}^{n-1}{\binom{n-1}{k-1}F(k,1)\sum_{m=1}^{n-k}{2^mF(n-k,m)}}
+$$
 
-$$=2F(n,1)+2\sum_{k=1}^{n-1}{\binom{n-1}{k-1}F(k,1)\sum_{m=1}^{n-k}{2^mF(n-k,m)}}$$
-
-$$=2F(n,1)+2\sum_{k=1}^{n-1}{\binom{n-1}{k-1}F(k,1)G(n-k)}$$
+$$
+=2F(n,1)+2\sum_{k=1}^{n-1}{\binom{n-1}{k-1}F(k,1)G(n-k)}
+$$
 
 可得递推式:
 
-$$F(n,1)=\frac{1}{2}G(n)-\sum_{k=1}^{n-1}{\binom{n-1}{k-1}{F(k,1)G(n-k)}}$$
+$$
+F(n,1)=\frac{1}{2}G(n)-\sum_{k=1}^{n-1}{\binom{n-1}{k-1}{F(k,1)G(n-k)}}
+$$
 
 注：
-$$G(n)=\sum_{m=0}^n{\binom{n}{m}2^{m(n-m)}}=\sum_{m=0}^n{\binom{n}{m}2^{nm-m^2}}
-=\sum_{m=0}^n{\frac{n!}{m!(n-m)!}2^{\frac{1}{2}(n^2+m^2-(n-m)^2)-m^2}}$$
-$$=n!2^\frac{n^2}{2}\sum_{m=0}^n{\frac{1}{m!(n-m)!}2^{-\frac{(n-m)^2}{2}-\frac{m^2}{2}}}
-=n!2^\frac{n^2}{2}\sum_{m=0}^n{\frac{2^{-\frac{(n-m)^2}{2}}}{m!}\frac{2^{-\frac{m^2}{2}}}{(n-m)!}}$$
+$$
+G(n)=\sum_{m=0}^n{\binom{n}{m}2^{m(n-m)}}=\sum_{m=0}^n{\binom{n}{m}2^{nm-m^2}}
+=\sum_{m=0}^n{\frac{n!}{m!(n-m)!}2^{\frac{1}{2}(n^2+m^2-(n-m)^2)-m^2}}\\
+=n!2^\frac{n^2}{2}\sum_{m=0}^n{\frac{1}{m!(n-m)!}2^{-\frac{(n-m)^2}{2}-\frac{m^2}{2}}}
+=n!2^\frac{n^2}{2}\sum_{m=0}^n{\frac{2^{-\frac{(n-m)^2}{2}}}{m!}\frac{2^{-\frac{m^2}{2}}}{(n-m)!}}
+$$
 
 法2：
 
@@ -221,23 +258,37 @@ $$=n!2^\frac{n^2}{2}\sum_{m=0}^n{\frac{1}{m!(n-m)!}2^{-\frac{(n-m)^2}{2}-\frac{m
 
 由$G$与$F$的定义可得
 
-$$G(n,S)=\sum_{T \supseteq S}{F(n,T)}$$
+$$
+G(n,S)=\sum_{T \supseteq S}{F(n,T)}
+$$
 
-$$F(n,S)=\sum_{T \supseteq S}{(-1)^{|T|-|S|}G(n,T)}$$
+$$
+F(n,S)=\sum_{T \supseteq S}{(-1)^{|T|-|S|}G(n,T)}
+$$
 
 于是有
 
-$$G(n,\emptyset)=\sum_{T \neq \emptyset}{F(n,T)}=\sum_{T \neq \emptyset}{\sum_{S\supseteq T}{(-1)^{|S|-|T|}G(n,S)}}$$
+$$
+G(n,\emptyset)=\sum_{T \neq \emptyset}{F(n,T)}=\sum_{T \neq \emptyset}{\sum_{S\supseteq T}{(-1)^{|S|-|T|}G(n,S)}}
+$$
 
-$$=\sum_{T \neq \emptyset}{\sum_{S\supseteq T}{(-1)^{|S|-|T|}2^{|S|(n-|S|)}G(n-|S|,\emptyset)}}$$
+$$
+=\sum_{T \neq \emptyset}{\sum_{S\supseteq T}{(-1)^{|S|-|T|}2^{|S|(n-|S|)}G(n-|S|,\emptyset)}}
+$$
 
-$$=\sum_{S\neq \emptyset}{(-1)^{|S|}2^{|S|(n-|S|)}G(n-|S|,\emptyset)\sum_{\emptyset \neq T\subseteq S}}{(-1)^{|T|}}$$
+$$
+=\sum_{S\neq \emptyset}{(-1)^{|S|}2^{|S|(n-|S|)}G(n-|S|,\emptyset)\sum_{\emptyset \neq T\subseteq S}}{(-1)^{|T|}}
+$$
 
-$$=\sum_{k=1}^{n}{(-1)^{k-1}\binom{n}{k}2^{k(n-k)}}G(n-k,\emptyset)$$
+$$
+=\sum_{k=1}^{n}{(-1)^{k-1}\binom{n}{k}2^{k(n-k)}}G(n-k,\emptyset)
+$$
 
 得到递推式：
 
-$F(n)=\sum_{k=1}^n{(-1)^{k-1}\binom nk 2^{k(n-k)}F(n-k)}$
+$$
+F(n)=\sum_{k=1}^n{(-1)^{k-1}\binom nk 2^{k(n-k)}F(n-k)}
+$$
 
 注：考虑上式的组合意义：
 
@@ -261,8 +312,9 @@ $F(n)=\sum_{k=1}^n{(-1)^{k-1}\binom nk 2^{k(n-k)}F(n-k)}$
 
 可得：
 
-$$F(n)=H(n)-\sum_{k=1}^{n}{\binom nk 2^{k(n-k)}H(n-k)G(k)}+F(n)$$
-
+$$
+F(n)=H(n)-\sum_{k=1}^{n}{\binom nk 2^{k(n-k)}H(n-k)G(k)}+F(n)
+$$
 其中$G(k)$表示$k$个点组成数个互不相连的强连通分量的方案数。
 
 右边加入$F(n)$的原因是，当$k$取到$n$时，该项表示的方案为$n$个点组成数个互不相连的强连通分量的方案数，即恰好包括了一个$F(n)$，因此要将其加回去。
@@ -273,24 +325,40 @@ $$F(n)=H(n)-\sum_{k=1}^{n}{\binom nk 2^{k(n-k)}H(n-k)G(k)}+F(n)$$
 
 由前式可得关于$G(n)$的递推式：
 
-$$H(n)=\sum_{k=1}^{n}{\binom nk 2^{k(n-k)}H(n-k)G(k)}$$
+$$
+H(n)=\sum_{k=1}^{n}{\binom nk 2^{k(n-k)}H(n-k)G(k)}
+$$
 
-$$=\sum_{k=1}^{n-1}{\binom n k 2^{k(n-k)}H(n-k)G(k)}+G(n)$$
+$$
+=\sum_{k=1}^{n-1}{\binom n k 2^{k(n-k)}H(n-k)G(k)}+G(n)
+$$
 
 于是
 
-$$G(n)=H(n)-\sum_{k=1}^{n-1}{\binom nk 2^{k(n-k)}H(n-k)G(k)}$$
+$$
+G(n)=H(n)-\sum_{k=1}^{n-1}{\binom nk 2^{k(n-k)}H(n-k)G(k)}
+$$
 
 考虑用$G(n)$获得$F(n)$的递推式，因为$F(n)=G(n,1)$，因此我们考虑通过枚举1号点所在强连通分量大小计算$\sum_{i=2}^{n}{(-1)^iG(n,i)}$然后加到$G(n)$上去。
 
-$$F(n)=G(n,1)=G(n)+\sum_{i=2}^{n}{(-1)^iG(n,i)}$$
+$$
+F(n)=G(n,1)=G(n)+\sum_{i=2}^{n}{(-1)^iG(n,i)}
+$$
 
-$$=G(n)+\sum_{i=2}^{n}{(-1)^i\sum_{k=1}^{n-i+1}{\binom {n-1}{k-1}G(k,1)G(n-k,i-1)}}$$
+$$
+=G(n)+\sum_{i=2}^{n}{(-1)^i\sum_{k=1}^{n-i+1}{\binom {n-1}{k-1}G(k,1)G(n-k,i-1)}}
+$$
 
-$$=G(n)+\sum_{k=1}^{n-1}{\binom {n-1}{k-1} G(k,1)\sum_{i=1}^{n-k}{(-1)^{i-1}G(n-k,i)}}$$
+$$
+=G(n)+\sum_{k=1}^{n-1}{\binom {n-1}{k-1} G(k,1)\sum_{i=1}^{n-k}{(-1)^{i-1}G(n-k,i)}}
+$$
 
-$$=G(n)+\sum_{k=1}^{n-1}{\binom {n-1}{k-1} F(k)G(n-k)}$$
+$$
+=G(n)+\sum_{k=1}^{n-1}{\binom {n-1}{k-1} F(k)G(n-k)}
+$$
 
 注：$G(n,i)$可通过枚举1号点所在连通块大小获得递推式
 
-$$G(n,i)=\sum_{k=1}^{n-i+1}{\binom {n-1}{k-1}G(k,1)G(n-k,i)}$$
+$$
+G(n,i)=\sum_{k=1}^{n-i+1}{\binom {n-1}{k-1}G(k,1)G(n-k,i)}
+$$
