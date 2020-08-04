@@ -281,13 +281,13 @@ $$
 $$
 
 $$
-=\sum_{k=1}^{n}{(-1)^{k-1}\binom{n}{k}2^{k(n-k)}}G(n-k,\emptyset)
+=\sum_{k=1}^{n}{\binom{n}{k}(-1)^{k-1}2^{k(n-k)}}G(n-k,\emptyset)
 $$
 
 得到递推式：
 
 $$
-F(n)=\sum_{k=1}^n{(-1)^{k-1}\binom nk 2^{k(n-k)}F(n-k)}
+F(n)=\sum_{k=1}^n{\binom nk(-1)^{k-1} 2^{k(n-k)}F(n-k)}
 $$
 
 注：考虑上式的组合意义：
@@ -362,3 +362,10 @@ $$
 $$
 G(n,i)=\sum_{k=1}^{n-i+1}{\binom {n-1}{k-1}G(k,1)G(n-k,i)}
 $$
+
+## 群有关的计数
+
+$$
+|GL(n,\mathbb F_q)|=\prod_{i=0}^{n-1}(q^n-q^i)
+$$
+
