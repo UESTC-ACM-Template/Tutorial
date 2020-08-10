@@ -81,7 +81,7 @@ Prufer序列转化为树：
 
 3. 前$n-k-1$个位置上的值任意。
 
-不难得到$n$个点，有$k$个连通块的森林数量为$\binom nk kn^{n-k-1}$
+不难得到$n$个点，有$k$个连通块的森林数量为$\displaystyle \binom nk kn^{n-k-1}$
 
 ### 有标号无根树计数
 
@@ -91,7 +91,7 @@ Prufer序列转化为树：
 
 枚举叶子个数$k$，可得到
 
-当$0 \leq n \leq 2$时有$F(n)=1$，否则有$F(n)=\sum_{k=1}^{n-1}{\binom nk (n-k)^{k}F(n-k)}$
+当$0 \leq n \leq 2$时有$F(n)=1$，否则有$\displaystyle F(n)=\sum_{k=1}^{n-1}{\binom nk (n-k)^{k}F(n-k)}$
 
 ### 有标号有根树计数
 
@@ -99,7 +99,7 @@ Prufer序列转化为树：
 
 ### 有标号基环树计数
 
-考虑魔改Prufer序列，先钦定$k$个点在环上，方案为$\binom nk$。
+考虑魔改Prufer序列，先钦定$k$个点在环上，方案为$\displaystyle \binom nk$。
 
 将环上的边都断开并将所有环上的点连向一个标号为正无穷的特殊点。
 

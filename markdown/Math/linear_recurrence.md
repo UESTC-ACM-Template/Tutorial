@@ -22,22 +22,22 @@ $$
 
 $$
 C=
-\mat{
+\begin{bmatrix}
     c_1 & c_2 & c_3 & \cdots & c_{k-1} & c_k\\
     1 & 0 & 0 & \cdots & 0 & 0\\
     0 & 1 & 0 & \cdots & 0 & 0\\
     \vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
     0 & 0 & 0 & \cdots & 0 & 0\\
     0 & 0 & 0 & \cdots & 1 & 0
-}
+\end{bmatrix}
 ,
-\vec x_i = \mat{
+\vec x_i = \begin{bmatrix}
     a_{i+k-1}\\
     a_{i+k-2}\\
     \vdots\\
     a_{i+1}\\
     a_{i}
-}
+\end{bmatrix}
 $$
 
 易得$\vec x_i=C\vec x_{i-1}=C^i\vec x_0$。
@@ -68,16 +68,17 @@ $$
 
 计算矩阵$C$的特征多项式$f(x)$，即行列式
 
-$$|xI-C|=\left|
-\begin{array}{cl}
+$$
+xI-C|=
+\begin{vmatrix}
 x-c_1 & -c_2 & -c_3 & \cdots & -c_{k-1} & -c_k\\
 -1 & x & 0 & \cdots & 0 & 0\\
 0 & -1 & x & \cdots & 0 & 0\\
 \vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
 0 & 0 & 0 & \cdots & x & 0\\
 0 & 0 & 0 & \cdots & -1 & x
-\end{array}
-\right|$$
+\end{vmatrix}
+$$
 
 对$i=k\cdots 2$，将第$i$列乘上$\frac 1 x$后加到第$i-1$列上后可得
 
@@ -112,31 +113,31 @@ int linear_recursion(int n, const vi& a, const vi& c) {
 
 $$
 C\vec x=
-\mat{
+\begin{bmatrix}
     c_1 & c_2 & c_3 & \cdots & c_{k-1} & c_k\\
     1 & 0 & 0 & \cdots & 0 & 0\\
     0 & 1 & 0 & \cdots & 0 & 0\\
     \vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
     0 & 0 & 0 & \cdots & 0 & 0\\
     0 & 0 & 0 & \cdots & 1 & 0
-}
-\mat{
+\end{bmatrix}
+\begin{bmatrix}
     \lambda ^{n-1}\\
     \lambda ^{n-2}\\
     \lambda ^{n-3}\\
     \vdots \\
     \lambda\\
     1
-}
+\end{bmatrix}
 =
-\mat{
+\begin{bmatrix}
     \lambda ^{n}\\
     \lambda ^{n-1}\\
     \lambda ^{n-2}\\
     \vdots \\
     \lambda^{2}\\
     \lambda^{1}
-}
+\end{bmatrix}
 =\lambda \vec x
 $$
 

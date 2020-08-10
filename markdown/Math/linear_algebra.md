@@ -9,7 +9,7 @@ $$
 
 ### Cramer法则
 
-对于非齐次线性方程组$A\vec x= \vec b$，其中$A=\{\vec{a}_1, \vec{a}_2, \cdots, \vec{a}_n\};A \in \R^{n\times n};\vec a_i, b \in \R^{n \times 1}; |A| \neq 0$。
+对于非齐次线性方程组$A\vec x= \vec b$，其中$A=\begin{bmatrix}\vec{a}_1, \vec{a}_2, \cdots, \vec{a}_n\end{bmatrix};A \in \R^{n\times n};\vec a_i, b \in \R^{n \times 1}; |A| \neq 0$。
 
 设$A_i=\{\vec a_1, \cdots, \vec a_{i-1}, \vec b, \vec a_{i+1}, \cdots, \vec a_n\}$，则$\vec x$的第$i$个分量等于$\frac{|A_i|}{|A|}$。
 
@@ -52,7 +52,8 @@ typedef vector<int> vec;
 typedef vector<vec> mat;
 
 int det(mat a) {
-    const int n = a.size(); int res = 1, f = 0;
+    const int n = a.size();
+    int res = 1, f = 0;
     for (int i = 0; i != n; ++i) {
         for (int j = i + 1; j != n && !a[i][i]; ++j)
             if (a[j][i]) swap(a[i], a[j]), f ^= 1;
