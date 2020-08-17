@@ -8,32 +8,45 @@
 
 因为一个$n-1$次多项式的系数可以被其在$n$个不同位置上的取值唯一确定（考虑对其在$n$个位置上的取值列一个$n$元线性方程组，其系数矩阵即为范德蒙德矩阵，因范德蒙德行列式不为0当且仅当$x_i$两两不同，所以该方程组有唯一解），所以如果对于一个$n-1$次多项式我们能够快速求出$f(x)$在$n$个不同位置上的取值并根据其反推原多项式的系数，卷积即可快速完成。
 
+如已知$f$与$g$之积是某个不超过$n-1$次的多项式，则可利用某种神奇算法快速计算出$f(x_0), \cdots, f(x_{n-1})$和$g(x_0),\cdots,g(x_{n-1})$，然后$O(n)$算出所有$h(x_i)=f(x_i)g(x_i)$，之后再用某种神奇算法从$h(x_0),\cdots,h(x_{n-1})$还原处$h$的各项系数。
+
 ### 快速傅里叶变换
 
-快速傅里叶变换可在$O(n \log n)$内从$n-1$次多项式的$n$个系数推出多项式在$n$个不同位置的取值。
+快速傅里叶变换可在$O(n \log n)$内从$n-1$次多项式的$n$个系数计算出多项式在$n$个不同位置的取值。
 
-设$\omega_n$满足$\omega_n^{n}=1$且$\forall i \in \{ 1, 2, ..., n - 1\}$，$\omega_n^i \neq 1$，我们选取的位置即为$x=\omega_n^{i},i\in\{0,1,...,n-1\}$。
+设$n$次单位根$\omega_n$满足$\omega_n^{n}=1$且$\forall i \in \{ 1, 2, ..., n - 1\}$，$\omega_n^i \neq 1$，选取的位置即为$x_i=\omega_n^{i},i\in\{0,1,...,n-1\}$。
 
 考虑利用单位根$\omega_n$分治对系数序列进行变换，即求出$f(\omega_n^k)，k\in \{0,1,...,n-1\}$，这里设$n=2^w$。
 
 将序列按下标的奇偶分成两份，即
 
-$$f_0(x)=\sum_{i=0}^{\frac n2-1} a_{2i}x^{i}$$
+$$
+f_0(x)=\sum_{i=0}^{\frac n2-1} a_{2i}x^{i}
+$$
 
-$$f_1(x)=\sum_{i=0}^{\frac n2-1}a_{2i+1}x^i$$
+$$
+f_1(x)=\sum_{i=0}^{\frac n2-1}a_{2i+1}x^i
+$$
 
 对每份分别进行FFT可得$f_0(\omega_{\frac n2}^{k}),f_1(\omega_{\frac n2}^{k}),k \in \{0,1,...,\frac n2-1\}$。
 
 注：对$f_0$和$f_1$进行FFT时所用的单位根为$\omega_{\frac n2}=\omega_n^{2}$，即分治下去所得结果为$f_0,f_1$在$\omega_n^{2k},k\in\{0,1,...,\frac n2 -1\}$上的取值。
 
-$$f(\omega_n^k)=\sum_{i=0}^{n-1}a_i \omega_n^{ki}=\sum_{i=0}^{\frac n2-1}a_{2i} \omega_n^{2ki}+\sum_{i=0}^{\frac n2-1}a_{2i+1}\omega_n^{2ki+k}$$
+$$
+f(\omega_n^k)=\sum_{i=0}^{n-1}a_i \omega_n^{ki}=\sum_{i=0}^{\frac n2-1}a_{2i} \omega_n^{2ki}+\sum_{i=0}^{\frac n2-1}a_{2i+1}\omega_n^{2ki+k}
+$$
 
-$$=\sum_{i=0}^{\frac n2-1}a_{2i} \omega_n^{2ki}+\omega_n^k\sum_{i=0}^{\frac n2-1}a_{2i+1}\omega_n^{2ki}=f_0(\omega_n^{2k})+\omega_n^kf_1(\omega_n^{2k})$$
+$$
+=\sum_{i=0}^{\frac n2-1}a_{2i} \omega_n^{2ki}+\omega_n^k\sum_{i=0}^{\frac n2-1}a_{2i+1}\omega_n^{2ki}=f_0(\omega_n^{2k})+\omega_n^kf_1(\omega_n^{2k})
+$$
 
-$$f(\omega_n^{k+\frac n2})=f(-\omega_n^k)=\sum_{i=0}^{n-1}a_i(-\omega_n^{k})^i=\sum_{i=0}^{\frac n2 - 1}a_{2i}(-\omega_n^k)^{2i}+\sum_{i=0}^{\frac n2 - 1} a_{2i+1}(-\omega_n^{k})^{2i+1}$$
+$$
+f(\omega_n^{k+\frac n2})=f(-\omega_n^k)=\sum_{i=0}^{n-1}a_i(-\omega_n^{k})^i=\sum_{i=0}^{\frac n2 - 1}a_{2i}(-\omega_n^k)^{2i}+\sum_{i=0}^{\frac n2 - 1} a_{2i+1}(-\omega_n^{k})^{2i+1}
+$$
 
-$$=\sum_{i=0}^{\frac n2 - 1}a_{2i}\omega_n^{2ki}-\omega_n^k\sum_{i=0}^{\frac n2 - 1}a_{2i+1}\omega_n^{2ki}=f_0(\omega_n^{2k})-\omega_n^{k}f_1(\omega_n^{2k})$$
-
+$$
+=\sum_{i=0}^{\frac n2 - 1}a_{2i}\omega_n^{2ki}-\omega_n^k\sum_{i=0}^{\frac n2 - 1}a_{2i+1}\omega_n^{2ki}=f_0(\omega_n^{2k})-\omega_n^{k}f_1(\omega_n^{2k})
+$$
 注：上述过程的$k \in \{0,1,...,\frac n2 -1\}$
 
 于是每层分治可以在$O(n)$复杂度内合并，总复杂度$O(n \log n)$。
@@ -43,26 +56,22 @@ $$=\sum_{i=0}^{\frac n2 - 1}a_{2i}\omega_n^{2ki}-\omega_n^k\sum_{i=0}^{\frac n2 
 快速傅里叶逆变换可在$O(n \log n)$内从多项式在$n$个不同位置的取值推出多项式的$n$个系数。
 
 考虑对$f$利用单位根$\omega_n$进行FFT得到$g$，再对$g$利用单位根$\omega_n^{-1}$进行FFT得到$h$，并设$g,h$的系数分别为$\{b_j\},\{c_k\}$
-
-$$b_j=\sum_{i=0}^{n-1}a_i\omega_n^{ij}$$
+$$
+b_j=\sum_{i=0}^{n-1}a_i\omega_n^{ij}
+$$
 
 $$
 c_k=\sum_{j=0}^{n-1}b_j\omega_n^{-j}=\sum_{j=0}^{n-1}\left(\sum_{i=0}^{n-1}a_i\omega_n^{ij}\right)\omega_n^{-jk}=\sum_{i=0}^{n-1}a_i\sum_{j=0}^{n-1}\omega_n^{ij}\omega_n^{-jk}
 =\sum_{i=0}^{n-1}a_i\sum_{j=0}^{n-1}\omega_n^{(i-k)j}
 $$
-
 注意到当$i=k$时有
-
 $$
 \sum_{j=0}^{n-1}\omega_n^{(i-k)j}=\sum_{j=0}^{n-1}1^j=n
 $$
-
 当$i \neq k$时有
-
 $$
 \sum_{j=0}^{n-1}\omega_n^{(i-k)j}=\frac{1-\omega_n^{(i-k)n}}{1-\omega_n^{i-k}}=\frac{1-1}{1-\omega_n^{i-k}}=0
 $$
-
 所以$c_k=na_k$
 
 ### 快速数论变换
@@ -229,6 +238,10 @@ using NTT2::pmul;
 using NTT2::pinv;
 ```
 
+### 循环卷积
+
+
+
 ## 多项式操作
 
 ### 卷积
@@ -264,13 +277,10 @@ vi mul(const vi& p1, const vi& p2, int n = 0) {
 对左半边分治下去，即计算$g_{l...m-1}$。
 
 考虑计算左边对右边的贡献（$i \geq m$）：
-
 $$
 \sum_{j=l}^{i-1}f_{i-j}g_j=\sum_{j=l}^{m-1}f_{i-j}g_j+\sum_{j=m}^{i-1}f_{i-j}g_j
 $$
-
 考虑用卷积计算第一项。令
-
 $$
 h_j=\begin{cases}
 g_{l+j} & j < w\\
@@ -282,7 +292,6 @@ $$
 (h*g)_{w+i}=\sum_{j=0}^{w+i}h_{j}g_{w+i-j}=\sum_{j=0}^{w-1}h_{j}g_{w+i-j}
 =\sum_{j=0}^{w-1}g_{l+j}f_{w+i-j}=\sum_{j=l}^{m-1}f_{m+i-j}g_j
 $$
-
 即第一项可以通过计算$\{g_l,g_{l+1},\cdots,g_{m-1}\}$与$f$的卷积得到。
 
 时间复杂度$O(n \log ^2 n)$
@@ -316,21 +325,17 @@ $$f_i=\bigoplus_{j=1}^{i} g_j,g_i=t\left(\sum_{j=1}^{i-1}f_{i-j}g_j\right)$$
 对左半边分治下去，即计算$g_{l...m-1}$。
 
 考虑计算左边对右边的贡献$(i \geq m)$，即计算：
-
 $$
 \sum_{(l \leq j_1 \vee l \leq j_2 )\wedge j_1 < m \wedge j_2 < m \wedge j_1+j_2=i}f_{j_1}g_{j_2}
 $$
-
 当$l=1$时，该式等价于$u=\{f_1,f_2,...,f_{m-1}\}$与$v=\{g_1,g_2,...,g_{m-1}\}$的卷积的第$i$项。
 
 当$l \neq 1$时，根据分治的性质，当$l \neq 1$时有$j_1+j_2 \geq 2l \geq r > i$，因此$l \leq j_1$ 与 $l \leq j_2$不能同时满足。
 
 分类讨论得该式等于
-
 $$
 \sum_{j_1=l}^{m-1}f_{j_1}g_{i-j_1}+\sum_{j_2=l}^{m-1}f_{i-j_2}g_{j_2}
 $$
-
 第一项等价于$u=\{f_l,f_{l+1}, \cdots, f_{m-1}\}$与$v=\{g_1,g_2, \cdots, g_{r-l+1}\}$的卷积的第$i-l-1$项。
 
 第二项等价于$u=\{f_1,f_{2}, \cdots, f_{r-l+1}\}$与$v=\{g_{l},g_{l+1}, \cdots, g_{m-1}\}$的卷积的第$i-l-1$项。
@@ -390,7 +395,6 @@ vi scale(const vi& a, ll d) {
 前置：卷积
 
 给定$f(x)$，求$g(x)=f(x+\delta)$。
-
 $$
 f(x+\delta)=\sum_{i=0}^{n-1}{a_i\sum_{j=0}^i{\binom ij x^j \delta^{i-j}}}
 =\sum_{j=0}^{n-1} x^j \sum_{i=j}^{n-1}{\binom ij a_i \delta^{i-j}}
@@ -400,14 +404,11 @@ $$
 =\sum_{j=0}^{n-1} x^j \sum_{i=0}^{n-j-1} \binom {n-i-1}{j}a_{n-i-1}\delta^{n-i-j-1}
 =\sum_{j=0}^{n-1} x^{n-j-1} \sum_{i=0}^{j} \binom {n-i-1}{n-j-1} a_{n-i-1}\delta^{j-i}
 $$
-
 令$c_i=a_{n-i-1}(n-i-1)!$，$d_i=\frac{\delta^i}{i!}$
-
 $$
 =\sum_{j=0}^n \frac{x^{n-j}}{(n-j)!}\sum_{i=0}^j \frac{(n-i)!}{(j-i)!}a_{n-i} \delta^{j-i}
 =\sum_{j=0}^n\frac{x^{n-j}}{(n-j)!}\sum_{i=0}^j c_i d_{j-i}
 $$
-
 将序列c与序列d卷起来再乘以阶乘即可。
 
 时间复杂度$O(n \log n)$，大常数。
@@ -477,17 +478,13 @@ vi integ(const vi& p1) {
 $$t(g) \equiv \sum_{k=0}^\infty \frac {t^{(k)}(h)}{k!}(g-h)^k \mod x^n$$
 
 因为$g(x)-h(x) \equiv 0 \mod x^ \frac n2$，所以第二项往后的项全部为0，我们得到
-
 $$
 0 \equiv t(g) \equiv t(h)+t'(h)(g-h) \mod x^n
 $$
-
 解得
-
 $$
 g \equiv h- \frac{t(h)}{t'(h)} \mod x^n
 $$
-
 边界：当$n=1$时根据具体情况处理。
 
 涉及到牛顿迭代的多项式算法基本都自带巨大常数，$n \log n$跑$n=10^5$要半秒左右。
@@ -510,11 +507,9 @@ f_0^{-1} & i=0\\
 \end{cases}$$
 
 考虑牛顿迭代：设$t(g)=\frac 1g-f$，则迭代方程为
-
 $$
 g(x) = h(x)-\frac{\frac{1}{h(x)}-f(x)}{-\frac{1}{h^2(x)}}=2h(x)-h^2(x)f(x) \mod x^n
 $$
-
 边界：当$n=1$时直接求常数的乘法逆即可。
 
 时间复杂度$O(n \log n)$，大常数。
@@ -605,11 +600,9 @@ pair<vi, vi> div(const vi& p1, const vi& p2) {
 给定$f(x)$，求$g(x)$使得$g(x)^2 \equiv f(x) \mod x^{n}$。
 
 考虑牛顿迭代：设$t(g)=g^2-f$，则迭代方程为
-
 $$
 g(x)=h(x)-\frac{h^2(x)-f(x)}{2h(x)}=\frac{h^2(x)+f(x)}{2h(x)} \mod x^n
 $$
-
 边界：当$n=1$时直接求常数的模意义下二次剩余即可。
 
 时间复杂度$O(n \log n)$，大常数。
@@ -671,19 +664,14 @@ vi log(const vi& p1) {
 给定$f(x)$，求$g(x)=\exp f(x) \mod x^n$。其中$f(0)=a_0=0$。
 
 原始形式：
-
 $$
 \exp f(x)=\sum_{i=0}^{\infty}\frac{f(x)^i}{i!}\\
 b_i=\sum_{}
 $$
-
-
 考虑牛顿迭代：设$t(g)=\ln g-f$，则迭代方程为
-
 $$
 g(x)=h(x)-\frac{\ln h-x}{\frac{1}{h}}=h(x)(1- \ln h+f) \mod x^n
 $$
-
 边界：当$n=1$时返回常数1。
 
 时间复杂度$O(n \log n)$，大常数。
@@ -737,10 +725,9 @@ vi pow(const vi& p1, int k) {
 给定$f(x)$，求$\mathscr E(f)(x)=\prod_{i=1}^{+\infty}\left(1-x^i\right)^{-a_i}$
 
 用$\exp$展开后展开$- \ln (1-x^i)$后可得
-
-$$\mathscr E(f)(x)=\exp\left(\sum_{j=1}^{+\infty}\frac {f(x^j)}{j}\right)
 $$
-
+\mathscr E(f)(x)=\exp\left(\sum_{j=1}^{+\infty}\frac {f(x^j)}{j}\right)
+$$
 $\exp$内的多项式可在$O(n \log n)$内求出。
 
 注：可扩展到形如($\prod_{i=1}^{+\infty}\left(1-b_ix^i\right)^{a_i}$)的多项式。
@@ -822,25 +809,29 @@ vi eval(const vi& p, const vi& x) {
 给定$f(0),f(1),...,f(n)$，求$f(m),f(m+1),...,f(m+n)$模意义下的值。其中$m>n$。
 
 由插值公式可得
-
-$$f(m+x)=\sum_{i=0}^{n}f(i)\prod_{j \neq i}\frac{m+x-j}{i-j}=\sum_{i=0}^{n}f(i) \frac{(m+x)!/(m+x-n-1)!}{(m+x-i)(-1)^{n-i}i!(n-i)!}$$
-
+$$
+f(m+x)=\sum_{i=0}^{n}f(i)\prod_{j \neq i}\frac{m+x-j}{i-j}=\sum_{i=0}^{n}f(i) \frac{(m+x)!/(m+x-n-1)!}{(m+x-i)(-1)^{n-i}i!(n-i)!}
+$$
 令
-
-$$u_i=\frac{f(i)}{(-1)^{n-i}i!(n-i)!}$$
-
+$$
+u_i=\frac{f(i)}{(-1)^{n-i}i!(n-i)!}
+$$
 当$i>n$时$u_i=0$
-
-$$v_i=\frac{1}{m-n+i}$$
-
+$$
+v_i=\frac{1}{m-n+i}
+$$
 可得
+$$
+(u * v)_{x}=\sum_{i=0}^{x}\frac{f(i)}{(-1)^{n-i}i!(n-i)!(m-n+x-i)}
+$$
 
-$$(u * v)_{x}=\sum_{i=0}^{x}\frac{f(i)}{(-1)^{n-i}i!(n-i)!(m-n+x-i)}$$
-
-$$(u * v)_{n+x}=\sum_{i=0}^{n}\frac{f(i)}{(-1)^{n-i}i!(n-i)!(m+x-i)}$$
-
+$$
+(u * v)_{n+x}=\sum_{i=0}^{n}\frac{f(i)}{(-1)^{n-i}i!(n-i)!(m+x-i)}
+$$
 即
-$$f(m+x)=(u*v)_{n+x}\prod_{i=m+x-n}^{m+x}i$$
+$$
+f(m+x)=(u*v)_{n+x}\prod_{i=m+x-n}^{m+x}i
+$$
 
 于是可用一次(任意模数)NTT求出$f(m),f(m+1),...,f(m+n)$。
 
